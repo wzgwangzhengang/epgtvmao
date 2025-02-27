@@ -1,1 +1,69 @@
+name: 更新CNTVEPG
+on:
+  schedule:
+    - cron: '0 17 * * *'  # 每天UTC 17:00（北京时间凌晨1点）
+  workflow_dispatch:
 
+jobs:
+  update-files:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout仓库
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: 设置Python环境
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: 安装依赖
+        run: |
+          python -m pip install requests lxml pytz
+
+      - name: 运行EPG抓取脚本
+        id: grab-epg
+        continue-on-error: true
+        run: |
+          # 强制删除旧文件以确保重新生成
+          rm -f cntvepg.xml.gz
+          python epg/cntvepg.py 2>&1 | tee grabber.log
+          exit_code=${PIPESTATUS[0]}
+          
+          # 仅当有成功数据或脚本完全成功时才继续
+          if grep -q "成功写入频道" grabber.log || [ $exit_code -eq 0 ]; then
+            echo "::notice::检测到有效EPG数据"
+            echo "has_epg=true" >> $GITHUB_ENV
+          else
+            echo "::error::未抓取到任何有效数据"
+            exit 1
+          fi
+
+      - name: 上传调试日志
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: epg-debug-logs
+          path: grabber.log
+
+      - name: 检查文件变更
+        id: check-changes
+        if: env.has_epg == 'true'
+        run: |
+          git add cntvepg.xml.gz
+          if git diff --staged --quiet; then
+            echo "::notice::无实际内容变更"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "::notice::检测到EPG内容更新"
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 提交并推送变更
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git commit -m "自动更新CNTVEPG数据"
+          git push
