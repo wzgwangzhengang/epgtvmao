@@ -28,7 +28,7 @@ jobs:
         run: |
           # 强制删除旧文件以确保重新生成
           rm -f cntvepg.xml.gz
-          python epg/cntvepg.py 2>&1 | tee grabber.log
+          python cntvepg/cntvepg.py 2>&1 | tee grabber.log
           exit_code=${PIPESTATUS[0]}
           
           # 仅当有成功数据或脚本完全成功时才继续
