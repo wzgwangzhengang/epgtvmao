@@ -27,7 +27,7 @@ jobs:
         pip install requests beautifulsoup4 lxml
 
     - name: Run TVMAO scraper
-      run: python tvmao-2.py
+      run: python tvmao.py
 
     - name: Commit changes
       run: |
