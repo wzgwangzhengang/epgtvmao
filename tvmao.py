@@ -89,8 +89,7 @@ def saveXML(root, filename, indent="\t", newl="\n", encoding="utf-8"):
 def get_program_info(link, sublink, week_day, id_name):
     st = []
     headers = {
-        'User-Agent':
-        'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:59.0) Gecko/20100101 Firefox/59.0',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:59.0) Gecko/20100101 Firefox/59.0',
         'Connection': 'keep-alive',
         'Cache-Control': 'no-cache'
     }
@@ -107,9 +106,10 @@ def get_program_info(link, sublink, week_day, id_name):
         title = temp_title.text.strip() if temp_title else "未知节目"
 
         time_div = program.contents[0].text.strip()
-        date_match = re.search(r'(\d{1,2}-\d{1,2})', time_div)
-        time_match = re.search(r'(\d{1,2}:\d{2})', time_div)
-        
+        # 调整正则表达式，确保正确匹配日期和时间
+        date_match = re.search(r'(\d{1,2}-\d{1,2})(?=\D|$)', time_div)  # 匹配末尾或非数字结尾的日期
+        time_match = re.search(r'(\d{1,2}:\d{2})', time_div)           # 匹配时间部分
+
         date_part = date_match.group(1) if date_match else '01-01'
         time_part = time_match.group(1) if time_match else '00:00'
 
@@ -151,6 +151,9 @@ def write_tvmao_xml(tv_channel):
             channel_id = u[1]
             try:
                 programs = get_program_info(link, sublink, w, channel_id)
+            except requests.exceptions.HTTPError as e:
+                print(f"请求失败：{c}，状态码：{e.response.status_code}")
+                continue
             except Exception as e:
                 print(f"获取{c}节目表失败: {str(e)}")
                 continue
@@ -261,7 +264,7 @@ tvmao_df_dict = {
     '江西移动': ['/program/JXTV-JXTV8-w', 'JXTV8'],
     '江西陶瓷': ['/program/JXTV-TAOCI-w', 'TAOCI'],
     '江西休闲影视':  ['/program/JXTV-JXXXYS-w', 'JXXXYS']
-  }
+ }
 root = ET.Element('tv')
 
 print("开始生成节目数据...")
