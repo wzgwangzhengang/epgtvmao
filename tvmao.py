@@ -27,6 +27,12 @@ USER_AGENTS = [
     'Mozilla/5.0 (Linux; Android 12; SM-G991B) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/605.1.15'
 ]
 
+# 星期映射表（中文转数字）
+WEEKDAY_MAP = {
+    "星期一": "1", "星期二": "2", "星期三": "3",
+    "星期四": "4", "星期五": "5", "星期六": "6", "星期日": "7"
+}
+
 def get_program_info(link, sublink, week_day, id_name, g_year):
     st = []
     headers = {
@@ -34,7 +40,7 @@ def get_program_info(link, sublink, week_day, id_name, g_year):
         'Referer': link,
         'X-Requested-With': 'XMLHttpRequest'
     }
-    website = f"{link}{sublink}{week_day}.html"
+    website = f"{link}{sublink}{week_day}.html"  # 使用数字星期
     
     # 带重试的请求机制
     for attempt in range(3):
@@ -66,22 +72,21 @@ def get_program_info(link, sublink, week_day, id_name, g_year):
     # 处理节目数据
     for program in program_divs:
         try:
-            # 改进时间解析
+            # 改进时间解析逻辑
             time_str_raw = program.contents[0].text.strip() if program.contents else ""
             if not time_str_raw:
                 continue
             
-            match = re.match(r'^(\d{4}-\d{2}-\d{2})(?:\s+(\d{2}:\d{2}))?$', time_str_raw)
+            # 使用更灵活的正则表达式
+            match = re.match(r'^(\d{4}-\d{2}-\d{2})(?:\s+(\d{2}:\d{2}))?', time_str_raw)
             if not match:
                 logging.warning(f"无效时间格式：{time_str_raw}")
                 continue
             date_part, time_part = match.groups()
-            full_time = f"{date_part} {time_part or '00:00'}"
+            full_time = f"{date_part} {time_part if time_part else '00:00'}"
             
-            # 打印调试信息
-            logging.debug(f"Parsed time: {full_time} -> {g_year}{full_time}")
-            
-            t_time = datetime.strptime(f"{g_year} {full_time}", '%Y-%m-%d %H:%M')
+            # 处理日期时间
+            t_time = datetime.strptime(f"{full_time}", '%Y-%m-%d %H:%M')
             
             # 标题解析
             title_elements = program.select(['.p_show', '.show-info', 'h3', '.title'])
@@ -121,12 +126,18 @@ def get_program_info(link, sublink, week_day, id_name, g_year):
 
 def write_tvmao_xml(tv_channel):
     link = "https://www.tvmao.com"
-    week = ['星期五']  # 根据实际需求修改
-    year = [datetime.now().strftime('%Y')]  # 使用当前年份
+    # 动态获取当前星期并转换为数字
+    target_date = datetime.now()
+    target_weekday = target_date.strftime("%A")
+    # 转换中文星期名称（根据系统语言设置可能需要调整）
+    cn_weekday = target_date.strftime("%w")  # 0-6对应周日到周六
+    week_num = str((int(cn_weekday) + 1) % 7 or 7)  # 转换为1-7
+    
+    year = [datetime.now().strftime('%Y')]
     
     for c, u in tv_channel.items():
         sublink, channel_id = u
-        programs = get_program_info(link, sublink, week[0], c, year[0])
+        programs = get_program_info(link, sublink, week_num, c, year[0])
         if not programs:
             continue
 
@@ -153,12 +164,12 @@ root = ET.Element('tv', {
     "xmlns": "http://www.guideplus.org/schema/epg"
 })
 
-# 频道配置（根据需要修改）
+# 修正后的频道配置
 tv_channels = {
-    '北京卫视': ['/program/BTV1-w', 'BTV1'],
-    'CCTV-1综合': ['/program/CCTV1-w', 'CCTV1'],  # 原路径错误，去除重复前缀
-    '湖南卫视': ['/program/HNTV-w', 'HNTV'],
-    '东方卫视': ['/program/DFWS-w', 'DFTV'],  # 使用网站实际路径
+    '北京卫视': ['/program/BTV1-w', 'BTV1'],        # 正确路径示例：/program/BTV1-w5.html
+    'CCTV-1综合': ['/program/CCTV1-w', 'CCTV1'],  # 正确路径示例：/program/CCTV1-w5.html
+    '湖南卫视': ['/program/HNTV-w', 'HNTV'],       # 正确路径示例：/program/HNTV-w5.html
+    '东方卫视': ['/program/DFWS-w', 'DFTV'],       # 正确路径示例：/program/DFWS-w5.html
 }
 
 if __name__ == "__main__":
