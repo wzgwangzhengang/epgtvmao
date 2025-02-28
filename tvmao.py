@@ -9,7 +9,7 @@ import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 from datetime import datetime, date, timedelta
 from xml.dom import minidom
-from datetime import datetime
+
 
 def get_year():
     now = datetime.now()
@@ -175,153 +175,7 @@ def write_tvmao_xml(tv_channel):
 
             print(f"已处理频道: {c}")
 
-import re
-import requests
-from datetime import datetime, timedelta
-from xml.etree.ElementTree import Element, SubElement
-from xml.dom import minidom
-from bs4 import BeautifulSoup
-
-def get_program_info(link, sublink, week_day, id_name):
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:59.0) Gecko/20100101 Firefox/59.0',
-        'Connection': 'keep-alive',
-        'Cache-Control': 'no-cache'
-    }
-    url = f"{link}{sublink}{week_day}.html"
-    response = requests.get(url, headers=headers)
-    soup = BeautifulSoup(response.text, 'lxml')
-    
-    programs = []
-    current_year = datetime.now().year
-    
-    # 修正1：使用精确的四位年份匹配
-    date_pattern = re.compile(r'(\d{4}-\d{2}-\d{2})')
-    time_pattern = re.compile(r'(\d{2}:\d{2})')
-    
-    for program_div in soup.select('ul#pgrow > div.over_hide'):
-        title_element = program_div.select_one('span.p_show')
-        title = title_element.text.strip() if title_element else "未知节目"
-        
-        time_str = program_div.contents[0].strip()
-        date_match = date_pattern.search(time_str)
-        time_match = time_pattern.search(time_str)
-        
-        # 修正2：统一日期格式处理
-        date_part = date_match.group(1) if date_match else f"{current_year}-01-01"
-        time_part = time_match.group(1) if time_match else '00:00'
-        
-        # 修正3：增强年份处理逻辑
-        try:
-            dt = datetime.strptime(f"{date_part} {time_part}", '%Y-%m-%d %H:%M')
-        except ValueError:
-            # 尝试跨年处理
-            try:
-                dt = datetime.strptime(f"{date_part} {time_part}", '%Y-%m-%d %H:%M').replace(year=current_year + 1)
-            except:
-                dt = datetime(current_year, 1, 1, 0, 0)
-        
-        start_time = dt.strftime("%Y%m%d%H%M%S")
-        end_time = start_time  # 暂时设为相同时间，需后续填充
-        
-        programs.append({
-            "ch_title": id_name,
-            "startime": start_time,
-            "title": title,
-            "endtime": end_time
-        })
-    
-    # 补充逻辑：处理时间连续性和年份边界
-    if programs:
-        # 补全首尾时段
-        first = programs[0]
-        if not first['startime'].startswith(str(current_year)):
-            first_start = datetime(current_year, 1, 1, 0, 0).strftime("%Y%m%d%H%M%S")
-            programs.insert(0, {
-                "ch_title": id_name,
-                "startime": first_start,
-                "title": "开播前导时段",
-                "endtime": first['startime']
-            })
-        
-        last = programs[-1]
-        last_end = datetime.strptime(last['startime'], "%Y%m%d%H%M%S").replace(
-            hour=23, minute=59, second=59
-        ).strftime("%Y%m%d%H%M%S")
-        programs[-1]['endtime'] = last_end
-        
-        # 填充中间空缺时段
-        for i in range(len(programs)-1):
-            prev_end = datetime.strptime(programs[i]['endtime'], "%Y%m%d%H%M%S")
-            next_start = datetime.strptime(programs[i+1]['startime'], "%Y%m%d%H%M%S")
-            
-            if prev_end < next_start:
-                gap_duration = next_start - prev_end
-                if gap_duration.total_seconds() > 300:  # 超过5分钟视为需要填充
-                    fill_time = prev_end
-                    while fill_time < next_start:
-                        fill_end = fill_time + timedelta(minutes=30)
-                        fill_end_str = fill_end.strftime("%Y%m%d%H%M%S")
-                        programs.append({
-                            "ch_title": id_name,
-                            "startime": fill_time.strftime("%Y%m%d%H%M%S"),
-                            "title": "节目间隙",
-                            "endtime": fill_end_str
-                        })
-                        fill_time = fill_end
-    
-    return programs
-
-def build_xml_channels(channel_data, root):
-    for channel_name, (sublink, channel_id) in channel_data.items():
-        channel_node = root.find(f'channel[@id="{channel_id}"]')
-        if not channel_node:
-            channel_node = SubElement(root, 'channel', id=channel_id)
-            SubElement(channel_node, 'display-name', lang='zh').text = channel_name
-        
-        # 分别处理周五和周六
-        for week_day in ['7', '1']:  # 对应周五和周六
-            try:
-                programs = get_program_info(
-                    "https://www.tvmao.com", 
-                    sublink, 
-                    week_day, 
-                    channel_id
-                )
-            except Exception as e:
-                print(f"处理频道 {channel_name}({channel_id}) 失败: {e}")
-                continue
-            
-            for program in programs:
-                programme_node = SubElement(channel_node, 'programme',
-                                            start=f"{program['startime']} +0800",
-                                            stop=f"{program['endtime']} +0800",
-                                            channel=channel_id)
-                SubElement(programme_node, 'title', lang='zh').text = program['title']
-
-def main():
-    root = Element('tv')
-    
-    # 保持三个频道数据独立
-    channels = [
-              tvmao_ws_dict,
-              tvmao_ys_dict,
-              tvmao_df_dict
-
-    ]
-    
-    for channel_dict in channels:
-        build_xml_channels(channel_dict, root)
-    
-    # 保存XML文件
-    def pretty_xml(element):
-        return minidom.parseString(ET.tostring(element)).toprettyxml(indent="\t")
-    
-    with open("tvmao.xml", "wb") as f:
-        f.write(pretty_xml(root).encode('utf-8'))
-    
-    print("EPG文件生成完成！")
-    tvmao_ws_dict = {
+ tvmao_ws_dict = {
     '北京卫视': ['/program_satellite/BTV1-w', 'BTV1'],
     '卡酷少儿频道': ['/program_satellite/BTV10-w', 'BTV10'],
     '重庆卫视': ['/program_satellite/CCQTV1-w', 'CCQTV1'],
@@ -408,8 +262,7 @@ tvmao_df_dict = {
     '江西陶瓷': ['/program/JXTV-TAOCI-w', 'TAOCI'],
     '江西休闲影视':  ['/program/JXTV-JXXXYS-w', 'JXXXYS']
   }
-if __name__ == "__main__":
-    main()root = ET.Element('tv')
+root = ET.Element('tv')
 
 print("开始生成节目数据...")
 write_tvmao_xml(tvmao_ys_dict)
