@@ -24,8 +24,6 @@ def get_week():
         w = [str(7)]
     else:
         w = [str(wd), str(wd + 1)]
-    # for i in range(wd,8):
-    #    w.append(str(i))
     return w
 
 
@@ -65,7 +63,6 @@ def sub_req(a, q, id):
 
     str3 = time.strftime("%w")
     wday = (7 if (int(str3) == 0) else int(str3))
-    # print(wday);
     F = _keyStr[wday * wday]
 
     return (F + str(w, 'utf-8') + str(v, 'utf-8'))
@@ -86,127 +83,97 @@ def saveXML(root, filename, indent="\t", newl="\n", encoding="utf-8"):
     rawText = ET.tostring(root)
     dom = minidom.parseString(rawText)
     with codecs.open(filename, 'w', 'utf-8') as f:
-        #writer = codecs.lookup('utf-8')[3](f)
         dom.writexml(f, "", indent, newl, encoding)
 
 
-def get_program_info(link, sublink, week_day, id_name, g_year):
+def get_program_info(link, sublink, week_day, id_name):
     st = []
-    # year=get_tomorrow1()
-    # week=get_week()
-    # now_date=year[week.index(str(week_day))]
     headers = {
         'User-Agent':
         'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:59.0) Gecko/20100101 Firefox/59.0',
         'Connection': 'keep-alive',
         'Cache-Control': 'no-cache'
     }
-    # website = '%s%s%s' % (link, sublink,week_day)
-    website = link + sublink + str(week_day) + ".html"
+    website = f"{link}{sublink}{week_day}.html"
     r = requests.get(website, headers=headers)
+    soup = BeautifulSoup(r.text, 'lxml')
 
-    soup = BeautifulSoup(r.text, 'lxml')  # 使用BeautifulSoup解析这段代码
-    # 获取节目列表
-    list_program_div = soup.find(name='ul', attrs={
-        "id": "pgrow"
-    }).find_all(name='div', attrs={"class": "over_hide"})
-    # list_program_div = soup.find(attrs={"id": "pgrow"}).find_all("li")
+    list_program_div = soup.find('ul', id="pgrow").find_all('div', class_="over_hide")
+
+    current_year = datetime.now().year
 
     for program in list_program_div:
-        # con_num = len(program.contents)
-        # title = program.contents[con_num - 1].text
+        temp_title = program.find("span", class_="p_show")
+        title = temp_title.text.strip() if temp_title else "未知节目"
 
-        temp_title=program.find_all("span", attrs={"class": "p_show"})
-        title=temp_title[0].text
+        time_div = program.contents[0].text.strip()
+        date_match = re.search(r'(\d{1,2}-\d{1,2})', time_div)
+        time_match = re.search(r'(\d{1,2}:\d{2})', time_div)
         
-        # t_time = '%s %s' % (g_year, program.contents[0].text)
-        # 修改后的代码
-        # 获取并清理节目时间文本
-        program_time_text = program.contents[0].text.strip()
+        date_part = date_match.group(1) if date_match else '01-01'
+        time_part = time_match.group(1) if time_match else '00:00'
 
-        # 分割日期和时间部分（假设格式为"MM-DD HH:mm"或只有"MM-DD"）
-        time_parts = program_time_text.split()
-        date_part = time_parts[0] if time_parts else ""
-        time_part = time_parts[1] if len(time_parts) > 1 else "00:00"  # 默认时间
-
-        # 组合完整日期时间字符串
         try:
-          full_date_str = f"{g_year}-{date_part}"  # 假设g_year为年份（如2025）
-          full_time_str = f"{full_date_str} {time_part}"
-    
-        # 解析时间
-          t_time = datetime.strptime(full_time_str, '%Y-%m-%d %H:%M')
-        except ValueError as e:
-           print(f"解析时间失败：{full_time_str}，错误：{e}")
-        # 可设置默认时间或跳过该条目
-        t_time = datetime.strptime(f"{g_year}-{date_part} 00:00", '%Y-%m-%d %H:%M')
-        startime=t_time.strftime("%Y%m%d%H%M%S")
-        pro_dic={"ch_title":id_name,"startime":startime,"title":title,"endtime":"000000"}
-        st.append(pro_dic)
-        # print(startime + "    " + title)
-        # print("----------------")
-    
-    test_data=st[0]
-    t_id=test_data["ch_title"]
-    t_st=test_data["startime"]
-    t_ti=test_data["title"]
+            t_time = datetime.strptime(f"{current_year}-{date_part} {time_part}", '%Y-%m-%d %H:%M')
+        except ValueError:
+            try:
+                t_time = datetime.strptime(f"{current_year + 1}-{date_part} {time_part}", '%Y-%m-%d %H:%M')
+            except:
+                t_time = datetime(current_year, 1, 1, 0, 0)
 
-    test_startime=re.sub('^\d{8}','',t_st)
-    if test_startime!="000000":
-        t1=datetime.strptime(g_year+" 00:00",'%Y-%m-%d %H:%M')
-        t2=t1.strftime("%Y%m%d%H%M%S")
-        pro_dic={"ch_title":id_name,"startime":t2,"title":"未知节目","endtime":t_st}
-        st.insert(0,pro_dic)
-    
-    for i,v in enumerate(st):
-        if i < len(st)-2:
-            endtime=st[i+1]
-            v["endtime"]=endtime["startime"]
-            st[i]=v
-        else:
-            tt=datetime.strptime(g_year+" 23:59",'%Y-%m-%d %H:%M')
-            endtime=tt.strftime("%Y%m%d%H%M%S")
-            v["endtime"]=endtime
-            st[i]=v
+        startime = t_time.strftime("%Y%m%d%H%M%S")
+        pro_dic = {"ch_title": id_name, "startime": startime, "title": title, "endtime": "000000"}
+        st.append(pro_dic)
+
+    if st:
+        first_pro = st[0]
+        if not first_pro['startime'].startswith(str(current_year)):
+            t1 = datetime(current_year, 1, 1, 0, 0).strftime("%Y%m%d%H%M%S")
+            st.insert(0, {"ch_title": id_name, "startime": t1, "title": "未知节目", "endtime": first_pro['startime']})
+
+    for i in range(len(st) - 1):
+        st[i]['endtime'] = st[i + 1]['startime']
+
+    if st:
+        last_pro = st[-1]
+        end_time = datetime.strptime(last_pro['startime'], "%Y%m%d%H%M%S").replace(hour=23, minute=59, second=59)
+        st[-1]['endtime'] = end_time.strftime("%Y%m%d%H%M%S")
+
     return st
 
 
 def write_tvmao_xml(tv_channel):
     link = "https://www.tvmao.com"
     week = get_week()
-    year = get_tomorrow1()
-    for i, w in enumerate(week):
+    for w in week:
         for c, u in tv_channel.items():
             sublink = u[0]
-            # t=get_tianmao_programme(u[1],u[0])
+            channel_id = u[1]
+            try:
+                programs = get_program_info(link, sublink, w, channel_id)
+            except Exception as e:
+                print(f"获取{c}节目表失败: {str(e)}")
+                continue
 
-            t = get_program_info(link, sublink, w, u[1], year[i])
+            # 创建或更新频道节点
+            channel_node = None
+            for node in root.findall('channel'):
+                if node.get('id') == channel_id:
+                    channel_node = node
+                    break
+            if not channel_node:
+                channel_node = ET.SubElement(root, 'channel', id=channel_id)
+                ET.SubElement(channel_node, 'display-name', lang='zh').text = c
 
-            index = len(root.findall('channel'))
-            child = ET.Element('channel')
-            root.insert(index, child)
+            # 添加节目单
+            for prog in programs:
+                programme = ET.SubElement(root, 'programme',
+                                          start=f"{prog['startime']} +0800",
+                                          stop=f"{prog['endtime']} +0800",
+                                          channel=channel_id)
+                ET.SubElement(programme, 'title', lang='zh').text = prog['title']
 
-            child.set("id", u[1])
-            child_name = ET.SubElement(child, "display-name")
-            child_name.set("lang", "zh")
-            child_name.text = c
-
-            for lop in t:
-                channel_id=lop['ch_title']
-                title=lop['title']
-                startime=lop['startime']
-                endtime=lop['endtime']
-
-                programme_sub=ET.SubElement(root,"programme")
-                programme_sub.set("start",startime+" +0800")
-                programme_sub.set("stop",endtime+" +0800")
-                programme_sub.set("channel",channel_id)
-
-                programme_title=ET.SubElement(programme_sub,"title")
-                programme_title.set("lang","zh")
-                programme_title.text=title
-            print("已经获取"+c)
-        # ET.dump(root)
+            print(f"已处理频道: {c}")
 
 tvmao_ws_dict = {
     '北京卫视': ['/program/BTV1-w', 'BTV1'],
@@ -280,12 +247,13 @@ tvmao_df_dict = {
     '四川星空购物频道': ['/program/SCTV-SCTV6-w', 'SCTV6'],
     '四川妇女儿童频道': ['/program/SCTV-SCTV7-w', 'SCTV7'],
   }
+root = ET.Element('tv', generator-info-name="Generated by 3mile", generator-info-url="https://3mile.top")
 
-root = ET.Element('tv')
-root.set("generator-info-name", "Generated by 3mile")
-root.set("generator-info-url", "https://3mile.top")
-
+print("开始生成节目数据...")
 write_tvmao_xml(tvmao_ys_dict)
 write_tvmao_xml(tvmao_ws_dict)
 write_tvmao_xml(tvmao_df_dict)
-saveXML(root,"tvmao.xml")
+
+print("保存XML文件...")
+saveXML(root, "tvmao.xml")
+print("EPG生成完成！")
