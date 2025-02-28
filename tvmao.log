@@ -1141,3 +1141,9 @@
 2025-02-28 01:47:36,774 - ERROR - 解析错误：time data '2025-02-28 ' does not match format '%Y-%m-%d %H:%M' - https://www.tvmao.com/program/CHENGDU-CDDYPD-w5.html
 2025-02-28 01:47:36,774 - ERROR - 解析错误：time data '2025-02-28 ' does not match format '%Y-%m-%d %H:%M' - https://www.tvmao.com/program/CHENGDU-CDDYPD-w5.html
 2025-02-28 01:47:36,803 - INFO - XML文件生成成功
+2025-02-28 13:00:31,759 - INFO - 开始生成节目表
+2025-02-28 13:00:41,231 - ERROR - 请求失败：https://www.tvmao.com/program/BTV-BTV1-w星期五.html，错误：404 Client Error: Not Found for url: https://www.tvmao.com/program/BTV-BTV1-w%E6%98%9F%E6%9C%9F%E4%BA%94.html
+2025-02-28 13:00:50,797 - ERROR - 请求失败：https://www.tvmao.com/program/CCTV-CCTV1-w星期五.html，错误：404 Client Error: Not Found for url: https://www.tvmao.com/program/CCTV-CCTV1-w%E6%98%9F%E6%9C%9F%E4%BA%94.html
+2025-02-28 13:00:59,613 - ERROR - 请求失败：https://www.tvmao.com/program/HNTV-HNTV-w星期五.html，错误：404 Client Error: Not Found for url: https://www.tvmao.com/program/HNTV-HNTV-w%E6%98%9F%E6%9C%9F%E4%BA%94.html
+2025-02-28 13:01:09,245 - ERROR - 请求失败：https://www.tvmao.com/program/DONGFANGTV-DONGFANGTV-w星期五.html，错误：404 Client Error: Not Found for url: https://www.tvmao.com/program/DONGFANGTV-DONGFANGTV-w%E6%98%9F%E6%9C%9F%E4%BA%94.html
+2025-02-28 13:01:09,253 - INFO - XML文件生成成功
