@@ -99,7 +99,6 @@ def get_program_info(link, sublink, week_day, channel_id):
         time_div = program.contents[0].strip()
         logging.debug(f"Parsing time string: {time_div}")
         
-        # 改进的日期时间解析
         date_match = re.search(r'(\d{1,2}-\d{1,2})|(\d{1,2}/\d{1,2})', time_div)
         time_match = re.search(r'(\d{1,2}:\d{2})', time_div)
         
@@ -108,7 +107,6 @@ def get_program_info(link, sublink, week_day, channel_id):
             date_candidate = date_match.group(1) or date_match.group(2)
             if not date_candidate:
                 continue
-            # 统一格式为yyyy-mm-dd
             date_parts = re.sub(r'([/-])', '-', date_candidate).split('-')
             if len(date_parts) != 3:
                 continue
@@ -120,14 +118,10 @@ def get_program_info(link, sublink, week_day, channel_id):
         
         time_part = time_match.group(1) if time_match else '00:00'
         
-        # 处理时间
-        try:
-            dt = parse_time(f"{date_part or current_year}-01-01 {time_part}")
-        except:
-            dt = datetime.now()
+        dt = parse_time(f"{date_part or current_year}-01-01 {time_part}") if date_part else datetime.now()
         
         startime = dt.strftime("%Y%m%d%H%M%S")
-        endtime = startime  # 临时设置
+        endtime = startime
         
         programs.append({
             "ch_title": channel_id,
@@ -136,20 +130,13 @@ def get_program_info(link, sublink, week_day, channel_id):
             "endtime": endtime
         })
     
-    # 排序并分配时段
     if not programs:
         return []
     
-    # 按开始时间排序
     programs.sort(key=lambda x: x['startime'])
     
-    # 生成时间段
     for i in range(len(programs)):
-        if i == 0:
-            prev_end = datetime.strptime(programs[i]['startime'], "%Y%m%d%H%M%S").replace(second=59)
-        else:
-            prev_end = datetime.strptime(programs[i-1]['endtime'], "%Y%m%d%H%M%S")
-        
+        prev_end = datetime.strptime(programs[i-1]['endtime'], "%Y%m%d%H%M%S").replace(second=59) if i > 0 else datetime.now().replace(hour=0, minute=0, second=0).replace(second=59)
         current_start = datetime.strptime(programs[i]['startime'], "%Y%m%d%H%M%S")
         
         if current_start < prev_end:
@@ -159,15 +146,13 @@ def get_program_info(link, sublink, week_day, channel_id):
         else:
             programs[i]['endtime'] = current_start.replace(second=59).strftime("%Y%m%d%H%M%S")
     
-    # 添加默认首播节目
-    first_program = programs[0]
-    if not first_program['startime'].startswith(get_year()):
+    if not programs[0]['startime'].startswith(get_year()):
         default_start = datetime.now().replace(hour=0, minute=0, second=0).strftime("%Y%m%d%H%M%S")
         programs.insert(0, {
             "ch_title": channel_id,
             "startime": default_start,
             "title": "开台节目",
-            "endtime": first_program['startime']
+            "endtime": programs[0]['startime']
         })
     
     return programs
@@ -180,7 +165,6 @@ def write_tvmao_xml(channel_dict, root):
             url = f"https://www.tvmao.com{sublink}{day}.html"
             programs = get_program_info(url, sublink, day, channel_id)
             
-            # 创建或更新频道节点
             channel_node = None
             for node in root.findall('channel'):
                 if node.get('id') == channel_id:
@@ -190,7 +174,6 @@ def write_tvmao_xml(channel_dict, root):
                 channel_node = ET.SubElement(root, 'channel', id=channel_id)
                 ET.SubElement(channel_node, 'display-name', lang='zh').text = channel_name
             
-            # 添加节目节点
             for prog in programs:
                 programme_node = ET.SubElement(channel_node, 'programme',
                                                 start=f"{prog['startime']} +0800",
@@ -199,6 +182,18 @@ def write_tvmao_xml(channel_dict, root):
                 title_node = ET.SubElement(programme_node, 'title', lang='zh')
                 title_node.text = prog['title']
 
+def main():
+    root = ET.Element('tv')
+    
+    # 处理三个频道字典
+    write_tvmao_xml(tvmao_ys_dict, root)
+    write_tvmao_xml(tvmao_ws_dict, root)
+    write_tvmao_xml(tvmao_df_dict, root)
+    
+    saveXML(root, "tvmao.xml")
+    logging.info("EPG生成完成！")
+
+# 正确配置的频道字典示例
 tvmao_ws_dict = {
     '北京卫视': ['/program_satellite/BTV1-w', 'BTV1'],
     '卡酷少儿频道': ['/program_satellite/BTV10-w', 'BTV10'],
@@ -286,17 +281,6 @@ tvmao_df_dict = {
     '江西陶瓷': ['/program/JXTV-TAOCI-w', 'TAOCI'],
     '江西休闲影视':  ['/program/JXTV-JXXXYS-w', 'JXXXYS']
  }
-def main():
-    root = ET.Element('tv')
-    
-    # 分别处理三个频道字典
-    write_tvmao_xml(tvmao_ys_dict, root)
-    write_tvmao_xml(tvmao_ws_dict, root)
-    write_tvmao_xml(tvmao_df_dict, root)
-    
-    # 保存XML文件
-    saveXML(root, "tvmao.xml")
-    logging.info("EPG生成完成！")
 
 if __name__ == "__main__":
     main()
