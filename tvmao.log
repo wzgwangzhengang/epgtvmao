@@ -1153,3 +1153,9 @@
 2025-02-28 13:03:54,660 - ERROR - 请求失败：https://www.tvmao.com/program/HNTV-HNTV-w星期五.html，错误：404 Client Error: Not Found for url: https://www.tvmao.com/program/HNTV-HNTV-w%E6%98%9F%E6%9C%9F%E4%BA%94.html
 2025-02-28 13:04:03,350 - ERROR - 请求失败：https://www.tvmao.com/program/DONGFANGTV-DONGFANGTV-w星期五.html，错误：404 Client Error: Not Found for url: https://www.tvmao.com/program/DONGFANGTV-DONGFANGTV-w%E6%98%9F%E6%9C%9F%E4%BA%94.html
 2025-02-28 13:04:03,378 - INFO - XML文件生成成功
+2025-02-28 13:08:38,561 - INFO - 开始生成节目表
+2025-02-28 13:08:48,973 - ERROR - 请求失败：https://www.tvmao.com/program/BTV1-w星期五.html，错误：404 Client Error: Not Found for url: https://www.tvmao.com/program/BTV1-w%E6%98%9F%E6%9C%9F%E4%BA%94.html
+2025-02-28 13:08:59,196 - ERROR - 请求失败：https://www.tvmao.com/program/CCTV1-w星期五.html，错误：404 Client Error: Not Found for url: https://www.tvmao.com/program/CCTV1-w%E6%98%9F%E6%9C%9F%E4%BA%94.html
+2025-02-28 13:09:09,074 - ERROR - 请求失败：https://www.tvmao.com/program/HNTV-w星期五.html，错误：404 Client Error: Not Found for url: https://www.tvmao.com/program/HNTV-w%E6%98%9F%E6%9C%9F%E4%BA%94.html
+2025-02-28 13:09:19,455 - ERROR - 请求失败：https://www.tvmao.com/program/DFWS-w星期五.html，错误：404 Client Error: Not Found for url: https://www.tvmao.com/program/DFWS-w%E6%98%9F%E6%9C%9F%E4%BA%94.html
+2025-02-28 13:09:19,478 - INFO - XML文件生成成功
