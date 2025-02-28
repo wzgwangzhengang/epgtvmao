@@ -33,14 +33,9 @@ jobs:
 
     - name: Configure Git
       run: |
-        # ✅ 使用预定义变量（以 GitHub Action 执行者身份提交）
         git config user.name "${{ github.actor }}"
         git config user.email "${{ github.actor@github.com }}"
         
-        # 或 ✅ 使用自定义 Secrets（以指定用户身份提交）
-        # git config user.name "${{ secrets.GITHUB_USER }}"
-        # git config user.email "${{ secrets.GITHUB_EMAIL }}"
-
     - name: Commit and Push
       if: [ -s tvmao.xml ]
       run: |
