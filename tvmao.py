@@ -46,7 +46,7 @@ def get_program_info(link, sublink, week_day, id_name, g_year):
             if attempt == 2:
                 logging.error(f"请求失败：{website}，错误：{str(e)}")
                 return []
-            time.sleep(2 ​**​ attempt + random.uniform(1,3))
+            time.sleep(2 ** attempt + random.uniform(1,3))
     else:
         return []
 
