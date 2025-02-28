@@ -9,7 +9,21 @@ import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 from datetime import datetime, date, timedelta
 from xml.dom import minidom
+from fake_useragent import UserAgent
 
+def get_random_headers():
+    ua = UserAgent()
+    return {
+        'User-Agent': ua.random,
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
+        'Referer': 'https://m.tvmao.com/',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'same-origin',
+        'Sec-Fetch-User': '?1',
+        'Upgrade-Insecure-Requests': '1'
+    }
 
 def get_year():
     now = datetime.now()
@@ -88,19 +102,25 @@ def saveXML(root, filename, indent="\t", newl="\n", encoding="utf-8"):
 
 def get_program_info(link, sublink, week_day, id_name):
     st = []
-    headers = {
-    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Mobile/15E148 Safari/604.1',
-    'Connection': 'keep-alive',
-    'Cache-Control': 'no-cache',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
-    'Referer': 'https://m.tvmao.com/',
-    'Sec-Fetch-Dest': 'document',
-    'Sec-Fetch-Mode': 'navigate',
-    'Sec-Fetch-Site': 'same-origin',
-    'Sec-Fetch-User': '?1',
-    'Upgrade-Insecure-Requests': '1'
-}
+    current_year = datetime.now().year
+    
+    for retry in range(3):  # 添加重试机制
+        try:
+            website = f"{link}{sublink}{week_day}.html"
+            r = requests.get(website, 
+                           headers=get_random_headers(),  # 使用随机请求头
+                           timeout=10,  # 添加超时设置
+                           proxies={
+                               'http': 'http://10.10.1.10:3128',
+                               'https': 'http://10.10.1.10:1080',
+                           })  # 可选代理配置
+            r.raise_for_status()
+            break
+        except requests.exceptions.RequestException as e:
+            if retry == 2:
+                print(f"请求失败: {website}, 错误: {str(e)}")
+                return []
+            time.sleep(2 ​**​ retry)  # 指数退避
     website = f"{link}{sublink}{week_day}.html"
     r = requests.get(website, headers=headers)
     soup = BeautifulSoup(r.text, 'lxml')
