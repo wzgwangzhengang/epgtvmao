@@ -303,7 +303,25 @@ def main():
     root = Element('tv')
     
     # 保持三个频道数据独立
-    channels = [tvmao_ws_dict = {
+    channels = [
+              tvmao_ws_dict,
+              tvmao_ys_dict,
+              tvmao_df_dict
+
+    ]
+    
+    for channel_dict in channels:
+        build_xml_channels(channel_dict, root)
+    
+    # 保存XML文件
+    def pretty_xml(element):
+        return minidom.parseString(ET.tostring(element)).toprettyxml(indent="\t")
+    
+    with open("tvmao.xml", "wb") as f:
+        f.write(pretty_xml(root).encode('utf-8'))
+    
+    print("EPG文件生成完成！")
+    tvmao_ws_dict = {
     '北京卫视': ['/program_satellite/BTV1-w', 'BTV1'],
     '卡酷少儿频道': ['/program_satellite/BTV10-w', 'BTV10'],
     '重庆卫视': ['/program_satellite/CCQTV1-w', 'CCQTV1'],
@@ -386,25 +404,10 @@ tvmao_df_dict = {
     '江西移动': ['/program/JXTV-XTV8-w', 'XTV8'],
     '风尚购物': ['/program/JXTV-FSTVGO-w', 'FSTVGO'],
     '江西电视指南': ['/program/JXTV-JXTV-GUIDE-w', 'JXTV-GUIDE'],
-    '江西移动': ['/program/JXTV-JXTV8-w', 'JXTV8'],
+    '江西移动': ['/program/JXTV-XTV8-w', 'XTV8'],
     '江西陶瓷': ['/program/JXTV-TAOCI-w', 'TAOCI'],
     '江西休闲影视':  ['/program/JXTV-JXXXYS-w', 'JXXXYS']
   }
-
-    ]
-    
-    for channel_dict in channels:
-        build_xml_channels(channel_dict, root)
-    
-    # 保存XML文件
-    def pretty_xml(element):
-        return minidom.parseString(ET.tostring(element)).toprettyxml(indent="\t")
-    
-    with open("tvmao.xml", "wb") as f:
-        f.write(pretty_xml(root).encode('utf-8'))
-    
-    print("EPG文件生成完成！")
-
 if __name__ == "__main__":
     main()root = ET.Element('tv')
 
