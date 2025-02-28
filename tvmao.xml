@@ -280,7 +280,7 @@
 		<title lang="zh">实况录像-2025年男篮亚洲杯预选赛 中国队-日本队</title>
 	</programme>
 	<channel id="CCTV5-PLUS">
-		<display-name lang="zh">CCTV5加</display-name>
+		<display-name lang="zh">CCTV-5体育赛事</display-name>
 	</channel>
 	<programme start="20250101000000 +0800" stop="20250101000000 +0800" channel="CCTV5-PLUS">
 		<title lang="zh">实况录像-2024/2025赛季中国男子篮球职业联赛 第32轮 山西汾酒-上海久事</title>
@@ -2644,7 +2644,7 @@
 		<title lang="zh">一师亦友</title>
 	</programme>
 	<channel id="BTV10">
-		<display-name lang="zh">卡酷少儿频道</display-name>
+		<display-name lang="zh">卡酷少儿</display-name>
 	</channel>
 	<programme start="20250101000000 +0800" stop="20250101000000 +0800" channel="BTV10">
 		<title lang="zh">音乐公主爱美莉2(1)</title>
@@ -3091,7 +3091,7 @@
 		<title lang="zh">正午看天下</title>
 	</programme>
 	<channel id="NANFANG2">
-		<display-name lang="zh">广东南方卫视</display-name>
+		<display-name lang="zh">南方卫视</display-name>
 	</channel>
 	<channel id="GUANXI1">
 		<display-name lang="zh">广西卫视</display-name>
@@ -3574,7 +3574,7 @@
 		<title lang="zh">偶像独播剧场:好女春华</title>
 	</programme>
 	<channel id="HUNANTV2">
-		<display-name lang="zh">湖南金鹰卡通</display-name>
+		<display-name lang="zh">金鹰卡通</display-name>
 	</channel>
 	<programme start="20250101000000 +0800" stop="20250101000000 +0800" channel="HUNANTV2">
 		<title lang="zh">果小喵之投喂计划等</title>
@@ -4147,7 +4147,7 @@
 		<title lang="zh">六姊妹(3)</title>
 	</programme>
 	<channel id="TOONMAX1">
-		<display-name lang="zh">哈哈炫动卫视</display-name>
+		<display-name lang="zh">哈哈炫动</display-name>
 	</channel>
 	<programme start="20250101000000 +0800" stop="20250101000000 +0800" channel="TOONMAX1">
 		<title lang="zh">猪猪侠之深海小英雄3(9)</title>
@@ -4693,7 +4693,7 @@
 		<title lang="zh">昆仑剧场:神雕侠侣(9)</title>
 	</programme>
 	<channel id="XIZANGTV1">
-		<display-name lang="zh">西藏电视台藏语卫视</display-name>
+		<display-name lang="zh">西藏卫视藏语</display-name>
 	</channel>
 	<programme start="20250101000000 +0800" stop="20250101000000 +0800" channel="XIZANGTV1">
 		<title lang="zh">凌晨剧场</title>
@@ -4753,7 +4753,7 @@
 		<title lang="zh">上午剧场</title>
 	</programme>
 	<channel id="XIZANGTV2">
-		<display-name lang="zh">西藏电视台汉语卫视</display-name>
+		<display-name lang="zh">西藏卫视</display-name>
 	</channel>
 	<programme start="20250101000000 +0800" stop="20250101000000 +0800" channel="XIZANGTV2">
 		<title lang="zh">西藏新闻联播</title>
@@ -4876,7 +4876,7 @@
 		<title lang="zh">上午剧场:虎胆巍城(13)</title>
 	</programme>
 	<channel id="HXTV">
-		<display-name lang="zh">福建海峡卫视</display-name>
+		<display-name lang="zh">海峡卫视</display-name>
 	</channel>
 	<programme start="20250101000000 +0800" stop="20250101000000 +0800" channel="HXTV">
 		<title lang="zh">今日海峡</title>
