@@ -34,8 +34,8 @@ jobs:
     - name: Commit changes
       if: always()
       run: |
-        git config --global user.name "${{ secrets.GITHUB_USERNAME }}"
-        git config --global user.email "${{ secrets.GITHUB_EMAIL }}"
+          git config user.name "${{ secrets.GITHUB_ACTOR }}"
+          git config user.email "${{ secrets.GITHUB_ACTOR@github.com }}"
         
         if [ -s tvmao.xml ]; then
           git add tvmao.xml tvmao.log
