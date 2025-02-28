@@ -120,7 +120,26 @@ def get_program_info(link, sublink, week_day, id_name, g_year):
         title=temp_title[0].text
         
         # t_time = '%s %s' % (g_year, program.contents[0].text)
-        t_time=datetime.strptime(g_year+" "+program.contents[0].text,'%Y-%m-%d %H:%M')
+        # 修改后的代码
+        # 获取并清理节目时间文本
+        program_time_text = program.contents[0].text.strip()
+
+        # 分割日期和时间部分（假设格式为"MM-DD HH:mm"或只有"MM-DD"）
+        time_parts = program_time_text.split()
+        date_part = time_parts[0] if time_parts else ""
+        time_part = time_parts[1] if len(time_parts) > 1 else "00:00"  # 默认时间
+
+        # 组合完整日期时间字符串
+        try:
+          full_date_str = f"{g_year}-{date_part}"  # 假设g_year为年份（如2025）
+          full_time_str = f"{full_date_str} {time_part}"
+    
+        # 解析时间
+          t_time = datetime.strptime(full_time_str, '%Y-%m-%d %H:%M')
+        except ValueError as e:
+           print(f"解析时间失败：{full_time_str}，错误：{e}")
+        # 可设置默认时间或跳过该条目
+        t_time = datetime.strptime(f"{g_year}-{date_part} 00:00", '%Y-%m-%d %H:%M')
         startime=t_time.strftime("%Y%m%d%H%M%S")
         pro_dic={"ch_title":id_name,"startime":startime,"title":title,"endtime":"000000"}
         st.append(pro_dic)
@@ -357,7 +376,29 @@ def get_program_info(link, sublink, week_day, id_name, g_year):
             full_time = f"{date_part} {time_part if time_part else '00:00'}"
             
             # 处理日期时间
-            t_time = datetime.strptime(f"{full_time}", '%Y-%m-%d %H:%M')
+            # 修改前的代码
+# t_time=datetime.strptime(g_year+" "+program.contents[0].text,'%Y-%m-%d %H:%M')
+
+# 修改后的代码
+# 获取并清理节目时间文本
+program_time_text = program.contents[0].text.strip()
+
+# 分割日期和时间部分（假设格式为"MM-DD HH:mm"或只有"MM-DD"）
+time_parts = program_time_text.split()
+date_part = time_parts[0] if time_parts else ""
+time_part = time_parts[1] if len(time_parts) > 1 else "00:00"  # 默认时间
+
+# 组合完整日期时间字符串
+try:
+    full_date_str = f"{g_year}-{date_part}"  # 假设g_year为年份（如2025）
+    full_time_str = f"{full_date_str} {time_part}"
+    
+    # 解析时间
+    t_time = datetime.strptime(full_time_str, '%Y-%m-%d %H:%M')
+except ValueError as e:
+    print(f"解析时间失败：{full_time_str}，错误：{e}")
+    # 可设置默认时间或跳过该条目
+    t_time = datetime.strptime(f"{g_year}-{date_part} 00:00", '%Y-%m-%d %H:%M')
             
             # 标题解析
             title_elements = program.select(['.p_show', '.show-info', 'h3', '.title'])
