@@ -8,6 +8,8 @@ on:
 jobs:
   update-epg:
     runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Shanghai  # 设置时区为北京时间
 
     steps:
     - name: Checkout code
@@ -27,7 +29,12 @@ jobs:
 
     - name: Run EPG Generator
       run: |
-        python tvmao.py || echo "运行遇到错误，检查日志"
+        echo "开始生成EPG数据..."
+        if ! python tvmao.py; then
+          echo "::error::EPG生成失败！检查tvmao.py脚本"
+          exit 1
+        fi
+        echo "生成日志内容："
         cat tvmao.log
 
     - name: Check XML file
@@ -35,22 +42,57 @@ jobs:
       run: |
         if [ -s tvmao.xml ]; then
           echo "xml_exists=true" >> $GITHUB_OUTPUT
+          echo "检测到有效XML文件"
         else
+          echo "::error::XML文件为空或不存在"
           echo "xml_exists=false" >> $GITHUB_OUTPUT
+          exit 1
         fi
 
     - name: Configure Git
       run: |
-        git config user.name "${{ github.actor }}"
-        git config user.email "${{ github.actor }}@users.noreply.github.com"
+        git config --global user.name "${{ github.actor }}"
+        git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+        echo "Git用户配置完成"
 
-    - name: Commit and Push
+    - name: Commit Changes
       if: steps.check_xml.outputs.xml_exists == 'true'
       run: |
+        cd $GITHUB_WORKSPACE
         git add tvmao.xml tvmao.log
-        git commit -m "EPG自动更新 $(date +'%Y-%m-%d %H:%M')"
-        git push
+
+        # 显示调试信息
+        echo "当前工作目录：$(pwd)"
+        echo "文件状态："
+        git status --short
+
+        # 生成标准化提交信息
+        COMMIT_TIME=$(date +'%Y-%m-%d %H:%M (CST)')
+        COMMIT_MSG="EPG自动更新 $COMMIT_TIME"
+
+        # 检查是否有实际变更
+        if ! git diff-index --quiet HEAD --; then
+          echo "检测到有效变更，执行提交..."
+          git commit -m "$COMMIT_MSG"
+          echo "::notice ::提交成功：$COMMIT_MSG"
+        else
+          echo "::warning ::没有检测到文件变更"
+          exit 0  # 正常退出避免工作流失败
+        fi
+
+    - name: Push Changes
+      if: steps.check_xml.outputs.xml_exists == 'true'
+      run: |
+        echo "开始推送变更..."
+        git pull --rebase origin main  # 防止推送冲突
+        if git push; then
+          echo "::notice ::成功推送到仓库"
+        else
+          echo "::error::推送失败，尝试强制推送..."
+          git push --force
+          exit 1
+        fi
 
     - name: Skip Commit
       if: steps.check_xml.outputs.xml_exists != 'true'
-      run: echo "XML文件为空，跳过提交"
+      run: echo "::warning ::XML文件检查未通过，跳过提交步骤"
