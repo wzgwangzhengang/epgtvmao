@@ -88,7 +88,7 @@ def saveXML(root, filename, indent="\t", newl="\n", encoding="utf-8"):
 
 def get_program_info(link, sublink, week_day, id_name):
     st = []
-   headers = {
+    headers = {
     'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Mobile/15E148 Safari/604.1',
     'Connection': 'keep-alive',
     'Cache-Control': 'no-cache',
@@ -122,11 +122,15 @@ def get_program_info(link, sublink, week_day, id_name):
         time_part = time_match.group(1) if time_match else '00:00'
 
         try:
+    # 尝试解析"月-日 时:分"格式
             t_time = datetime.strptime(f"{current_year}-{date_part} {time_part}", '%Y-%m-%d %H:%M')
         except ValueError:
             try:
-                t_time = datetime.strptime(f"{current_year + 1}-{date_part} {time_part}", '%Y-%m-%d %H:%M')
-            except:
+        # 尝试解析带中文的格式（如12月31日 20:30）
+                date_part = re.sub(r'[月日]', '-', date_part).strip('-')
+                t_time = datetime.strptime(f"{current_year}-{date_part} {time_part}", '%Y-%m-%d %H:%M')
+            except Exception as e:
+                print(f"时间解析失败: {date_part} {time_part}, 错误: {str(e)}")
                 t_time = datetime(current_year, 1, 1, 0, 0)
 
         startime = t_time.strftime("%Y%m%d%H%M%S")
