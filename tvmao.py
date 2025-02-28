@@ -303,8 +303,7 @@ def main():
     root = Element('tv')
     
     # 保持三个频道数据独立
-    channels = [
-tvmao_ws_dict = {
+    channels = [tvmao_ws_dict = {
     '北京卫视': ['/program_satellite/BTV1-w', 'BTV1'],
     '卡酷少儿频道': ['/program_satellite/BTV10-w', 'BTV10'],
     '重庆卫视': ['/program_satellite/CCQTV1-w', 'CCQTV1'],
