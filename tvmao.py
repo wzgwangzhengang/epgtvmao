@@ -260,7 +260,7 @@ tvmao_df_dict = {
     '江西电视指南': ['/program/JXTV-JXTV-GUIDE-w', 'JXTV-GUIDE'],
     '江西移动': ['/program/JXTV-XTV8-w', 'XTV8'],
     '江西陶瓷': ['/program/JXTV-TAOCI-w', 'TAOCI'],
-    '江西休闲影视 ['/program/JXTV-JXXXYS-w', 'JXXXYS']
+    '江西休闲影视':  ['/program/JXTV-JXXXYS-w', 'JXXXYS']
   }
 root = ET.Element('tv')
 
