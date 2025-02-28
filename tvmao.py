@@ -1,199 +1,155 @@
 # -*- coding: utf-8 -*-
 import re
 import requests
+import json
 import time
 import codecs
 import base64
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
-from datetime import datetime, timedelta
+from datetime import datetime, date, timedelta
 from xml.dom import minidom
 import logging
 import random
-from dateutil import parser
 
-# 配置增强版日志系统
+# 配置日志系统
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s (%(filename)s:%(lineno)d)',
-    handlers=[
-        logging.FileHandler('tvmao.log', encoding='utf-8'),
-        logging.StreamHandler()
-    ]
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[logging.FileHandler('tvmao.log'), logging.StreamHandler()]
 )
 
 USER_AGENTS = [
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Safari/605.1.15',
-    'Mozilla/5.0 (Windows NT 10.0; rv:109.0) Gecko/20100101 Firefox/118.0'
+    'Mozilla/5.0 (Windows NT 10.0; rv:109.0) Gecko/20100101 Firefox/118.0',
+    'Mozilla/5.0 (iPad; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
+    'Mozilla/5.0 (Linux; Android 12; SM-G991B) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/605.1.15'
 ]
 
-def safe_time_parse(time_str, base_date):
-    """
-    安全解析时间字符串，支持多种格式：
-    1. 完整时间 (YYYY-MM-DD HH:MM)
-    2. 仅时间 (HH:MM)
-    3. 时间段 (HH:MM-HH:MM)
-    4. 特殊标记 (直播/重播)
-    """
-    try:
-        # 清理空白字符
-        time_str = re.sub(r'\s+', ' ', time_str.strip())
-        
-        # 处理特殊标记
-        if time_str in {'直播', '重播', 'LIVE'}:
-            return base_date.replace(hour=12, minute=0)  # 默认中午12点
-
-        # 提取第一个时间部分
-        time_part = re.split(r'[-\s]', time_str)[0]
-        
-        # 包含日期的情况
-        if re.match(r'\d{4}-\d{2}-\d{2}', time_part):
-            dt = parser.parse(time_part, fuzzy=True)
-            return dt.replace(year=base_date.year)
-            
-        # 仅时间的情况
-        if re.match(r'\d{1,2}:\d{2}', time_part):
-            time_obj = datetime.strptime(time_part, "%H:%M")
-            return base_date.replace(hour=time_obj.hour, minute=time_obj.minute)
-            
-        # 最后尝试dateutil解析
-        return parser.parse(time_str, fuzzy=True, default=base_date)
-        
-    except Exception as e:
-        logging.warning(f"时间解析失败: {time_str} | 错误: {str(e)}")
-        return base_date  # 返回基准日期作为保底值
-
 def get_program_info(link, sublink, week_day, id_name, g_year):
-    """获取频道节目信息（增强版）"""
     st = []
-    base_date = datetime.strptime(g_year, "%Y-%m-%d")
-    
     headers = {
         'User-Agent': random.choice(USER_AGENTS),
         'Referer': link,
-        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8'
+        'X-Requested-With': 'XMLHttpRequest'
     }
-    
     website = f"{link}{sublink}{week_day}.html"
-    logging.info(f"开始处理: {id_name} - {website}")
-
-    # 带指数退避的重试机制
+    
+    # 带重试的请求机制
     for attempt in range(3):
         try:
-            response = requests.get(website, headers=headers, timeout=(10, 30))
+            response = requests.get(website, headers=headers, timeout=15)
             response.raise_for_status()
             break
         except Exception as e:
             if attempt == 2:
-                logging.error(f"请求失败: {website} | 错误: {str(e)}")
+                logging.error(f"请求失败：{website}，错误：{str(e)}")
                 return []
-            delay = (2 ** attempt) + random.uniform(1, 3)
-            time.sleep(delay)
+            time.sleep(2 ​**​ attempt + random.uniform(1,3))
     else:
         return []
 
     soup = BeautifulSoup(response.text, 'lxml')
     
-    # 改进的选择器，兼容页面结构变化
-    container = soup.find('ul', id='pgrow') or soup.find('div', class_='program-list')
-    if not container:
-        logging.warning(f"找不到节目列表容器: {id_name}")
+    # 增强的页面元素查找
+    pgrow_ul = soup.find('ul', {'id': 'pgrow'})
+    if not pgrow_ul:
+        logging.warning(f"未找到节目列表容器：{id_name} - {website}")
         return []
     
-    program_items = container.find_all(['div.over_hide', 'li.program-item'], recursive=True)
-    
-    for item in program_items:
+    program_divs = pgrow_ul.find_all('div', class_='over_hide')
+    if not program_divs:
+        logging.warning(f"未找到节目条目：{id_name} - {website}")
+        return []
+
+    # 处理节目数据
+    for program in program_divs:
         try:
-            # 时间部分解析
-            time_element = item.find(class_=re.compile(r'time|start'))
-            raw_time = time_element.text.strip() if time_element else ''
+            # 改进时间解析
+            time_str_raw = program.contents[0].text.strip()
+            match = re.match(r'(\d{4}-\d{2}-\d{2})(?:\s+(\d{2}:\d{2}))?', time_str_raw)
+            if not match:
+                logging.warning(f"无效时间格式：{time_str_raw}")
+                continue
+            date_part, time_part = match.groups()
+            full_time = f"{date_part} {time_part or '00:00'}"
+            t_time = datetime.strptime(f"{g_year} {full_time}", '%Y-%m-%d %H:%M')
             
-            # 标题解析
-            title_element = item.find(class_=re.compile(r'p_show|title|name'))
-            title = title_element.text.strip() if title_element else '未知节目'
+            # 改进标题解析
+            title_elements = program.select(['.p_show', '.show-info', 'h3', '.title'])
+            title = title_elements[0].text.strip() if title_elements else "未知节目"
             
-            # 安全解析时间
-            program_time = safe_time_parse(raw_time, base_date)
-            startime = program_time.strftime("%Y%m%d%H%M%S")
-            
+            startime = t_time.strftime("%Y%m%d%H%M%S")
             st.append({
                 "ch_title": id_name,
                 "startime": startime,
                 "title": title,
                 "endtime": "000000"
             })
-            
         except Exception as e:
-            logging.error(f"条目解析失败: {item} | 错误: {str(e)}")
+            logging.error(f"解析错误：{str(e)} - {website}")
             continue
 
-    # 时间区间填充逻辑
+    # 填充时间段
     if st:
-        # 按时间排序
-        st.sort(key=lambda x: x['startime'])
+        # 处理首尾时间
+        start_of_day = datetime.strptime(f"{g_year} 00:00", '%Y-%m-%d %H:%M').strftime("%Y%m%d%H%M%S")
+        end_of_day = datetime.strptime(f"{g_year} 23:59", '%Y-%m-%d %H:%M').strftime("%Y%m%d%H%M%S")
         
-        # 填充结束时间
+        st[0]['startime'] = start_of_day
+        last_time = start_of_day
+        
         for i in range(len(st)-1):
-            st[i]['endtime'] = st[i+1]['startime']
+            current_start = datetime.strptime(st[i]['startime'], '%Y%m%d%H%M%S')
+            next_start = datetime.strptime(st[i+1]['startime'], '%Y%m%d%H%M%S')
+            duration = (next_start - current_start).total_seconds()
+            if duration < 60:
+                st[i]['endtime'] = next_start.strftime("%Y%m%d%H%M%S")
+            else:
+                st[i]['endtime'] = current_start.replace(minute=current_start.minute+30, second=0, microsecond=0).strftime("%Y%m%d%H%M%S")
+            last_time = st[i]['endtime']
+        st[-1]['endtime'] = end_of_day
         
-        # 处理最后一条
-        last_end = base_date.replace(hour=23, minute=59)
-        st[-1]['endtime'] = last_end.strftime("%Y%m%d%H%M%S")
-        
-        # 添加第一条的起始时间
-        first_start = base_date.replace(hour=0, minute=0)
-        if st[0]['startime'] != first_start.strftime("%Y%m%d%H%M%S"):
-            st.insert(0, {
-                "ch_title": id_name,
-                "startime": first_start.strftime("%Y%m%d%H%M%S"),
-                "title": "节目开始",
-                "endtime": st[0]['startime']
-            })
-            
     return st
 
-def generate_xml(channels):
-    """生成XML文件（改进版）"""
-    root = ET.Element('tv', {
-        "generator-info-name": "TVMAO EPG Generator",
-        "generator-info-url": "https://github.com/your-repo",
-        "source-info-name": "电视猫",
-        "source-info-url": "https://www.tvmao.com"
-    })
+def write_tvmao_xml(tv_channel):
+    link = "https://www.tvmao.com"
+    week = get_week()
+    year = get_tomorrow1()
     
-    for chan_name, chan_data in channels.items():
-        programs = get_program_info(
-            link="https://www.tvmao.com",
-            sublink=chan_data[0],
-            week_day=datetime.now().weekday() + 1,
-            id_name=chan_data[1],
-            g_year=datetime.now().strftime("%Y-%m-%d")
-        )
-        
-        if not programs:
-            continue
-            
-        # 创建频道节点
-        chan_node = ET.SubElement(root, 'channel', id=chan_data[1])
-        ET.SubElement(chan_node, 'display-name').text = chan_name
-        
-        # 添加节目单
-        for prog in programs:
-            programme = ET.SubElement(root, 'programme',
-                start=f"{prog['startime']} +0800",
-                stop=f"{prog['endtime']} +0800",
-                channel=chan_data[1]
-            )
-            ET.SubElement(programme, 'title').text = prog['title']
-            
-    return root
+    for i, w in enumerate(week):
+        for c, u in tv_channel.items():
+            sublink, channel_id = u
+            programs = get_program_info(link, sublink, w, channel_id, year[i])
+            if not programs:
+                continue
 
-def main():
-    """主执行函数"""
-    try:
-        # 频道配置（示例）
-        tvmao_ws_dict = {
+            # 创建XML节点
+            channel_node = ET.SubElement(root, 'channel', id=channel_id)
+            ET.SubElement(channel_node, 'display-name', lang='zh').text = c
+            
+            for prog in programs:
+                programme = ET.SubElement(root, 'programme',
+                    start=f"{prog['startime']} +0800",
+                    stop=f"{prog['endtime']} +0800",
+                    channel=channel_id
+                )
+                ET.SubElement(programme, 'title', lang='zh').text = prog['title']
+            
+            logging.info(f"成功处理频道：{c} ({channel_id})")
+
+# XML根节点
+root = ET.Element('tv', {
+    "generator-info-name": "Generated by Enhanced Script",
+    "generator-info-url": "https://github.com/yourrepo",
+    "source-info-name": "TVMAO",
+    "source-info-url": "https://www.tvmao.com",
+    "xmlns": "http://www.guideplus.org/schema/epg"
+})
+
+# ... (保持原有的tvmao_ws_dict, tvmao_ys_dict, tvmao_df_dict不变)
+ tvmao_ws_dict = {
     '北京卫视': ['/program/BTV-BTV1-w', 'BTV1'],
     '北京电视台卡酷少儿频道': ['/program/BTV-BTV10-w', 'BTV10'],
     '重庆卫视': ['/program/CCQTV-CCQTV1-w', 'CCQTV1'],
@@ -277,27 +233,20 @@ tvmao_df_dict = {
     '成都美食天府': ['/program/CHENGDU-CDTV-7-w', 'CDTV-7'],
     '成都电影频道': ['/program/CHENGDU-CDDYPD-w', 'CDDYPD']
 }
-        
-        # 生成XML结构
-        xml_root = generate_xml({**tvmao_ys_dict, **tvmao_ws_dict, **tvmao_df_dict})
-        
-        # 美化输出
-        xml_str = ET.tostring(xml_root, encoding='utf-8')
-        dom = minidom.parseString(xml_str)
-        
-        with codecs.open("tvmao.xml", "w", "utf-8") as f:
-            dom.writexml(f, indent="  ", newl="\n", encoding="utf-8")
-            
-        logging.info("XML文件生成成功")
-        
-    except Exception as e:
-        logging.critical(f"致命错误: {str(e)}", exc_info=True)
-        exit(1)
-
 if __name__ == "__main__":
-    main()
-
-
-
-
-
+    try:
+        logging.info("开始生成节目表")
+        write_tvmao_xml(tvmao_ys_dict)
+        write_tvmao_xml(tvmao_ws_dict)
+        write_tvmao_xml(tvmao_df_dict)
+        
+        # 美化XML输出
+        xml_str = ET.tostring(root, encoding='utf-8')
+        dom = minidom.parseString(xml_str)
+        with codecs.open("tvmao.xml", "w", "utf-8") as f:
+            dom.writexml(f, indent="\t", newl="\n", encoding="utf-8")
+        
+        logging.info("XML文件生成成功")
+    except Exception as e:
+        logging.critical(f"致命错误：{str(e)}", exc_info=True)
+        exit(1)
