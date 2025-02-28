@@ -206,7 +206,7 @@ tvmao_ws_dict = {
     '哈哈炫动卫视': ['/program_satellite/TOONMAX1-w', 'TOONMAX1'],
     '陕西卫视': ['/program_satellite/SHXITV1-w', 'SHXITV1'],
     '四川卫视': ['/program_satellite/SCTV1-w', 'SCTV1'],
-    '康巴卫视': ['/program_satellite/KAMBA-TV-w', 'KAMBA'],
+    '康巴卫视': ['/program_satellite/KAMBA-TV-w', 'KAMBA-TV'],
     '天津卫视': ['/program_satellite/TJTV1-w', 'TJTV1'],
     '新疆卫视': ['/program_satellite/XJTV1-w', 'XJTV1'],
     '云南卫视': ['/program_satellite/YNTV1-w', 'YNTV1'],
@@ -258,7 +258,7 @@ tvmao_df_dict = {
     '江西移动': ['/program/JXTV-XTV8-w', 'XTV8'],
     '风尚购物': ['/program/JXTV-FSTVGO-w', 'FSTVGO'],
     '江西电视指南': ['/program/JXTV-JXTV-GUIDE-w', 'JXTV-GUIDE'],
-    '江西移动': ['/program/JXTV-XTV8-w', 'XTV8'],
+    '江西移动': ['/program/JXTV-JXTV8-w', 'JXTV8'],
     '江西陶瓷': ['/program/JXTV-TAOCI-w', 'TAOCI'],
     '江西休闲影视':  ['/program/JXTV-JXXXYS-w', 'JXXXYS']
   }
