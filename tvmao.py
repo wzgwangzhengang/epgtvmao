@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import re
 import requests
 import json
@@ -9,155 +8,178 @@ import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 from datetime import datetime, date, timedelta
 from xml.dom import minidom
+import logging
 
+# 配置日志记录
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def get_year():
-    now = datetime.now()
-    year = now.strftime('%Y')
-    return str(year)
+    return datetime.now().strftime('%Y')
 
 def get_week():
-    now = datetime.now()
-    week = now.strftime('%w')
-    wd = int(week)
-    if wd == 0:
-        w = [str(7)]
-    else:
-        w = [str(wd), str(wd + 1)]
-    return w
-
+    wd = datetime.now().strftime('%w')
+    return [str(7)] if wd == '0' else [wd, str(int(wd)+1)]
 
 def get_time(times):
-    time_r = time.strftime("%Y%m%d%H%M%S", time.localtime(int(times)))
-    return time_r
-
-
-def get_tomorrow1():
-    day = []
-    day.append(datetime.today().strftime('%Y-%m-%d'))
-    now = datetime.today()
-    delta = now + timedelta(days=1)
-    date2 = delta.strftime('%Y-%m-%d')
-    day.append(date2)
-    return day
-
+    return time.strftime("%Y%m%d%H%M%S", time.localtime(int(times)))
 
 def get_tomorrow():
-    day = []
-    day.append(datetime.today().strftime('%Y%m%d'))
-    now = datetime.today()
-    delta = now + timedelta(days=1)
-    date2 = delta.strftime('%Y%m%d')
-    day.append(date2)
-    return day
-
+    today = datetime.today()
+    return [today.strftime('%Y%m%d'), (today + timedelta(days=1)).strftime('%Y%m%d')]
 
 def sub_req(a, q, id):
     _keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
-
     str1 = "|" + q
-    v = base64.b64encode(str1.encode('utf-8'))
-
+    v = base64.b64encode(str1.encode('utf-8')).decode('utf-8')
+    
     str2 = id + "|" + a
-    w = base64.b64encode(str2.encode('utf-8'))
-
-    str3 = time.strftime("%w")
-    wday = (7 if (int(str3) == 0) else int(str3))
+    w = base64.b64encode(str2.encode('utf-8')).decode('utf-8')
+    
+    wday = 7 if datetime.now().strftime('%w') == '0' else int(datetime.now().strftime('%w'))
     F = _keyStr[wday * wday]
+    
+    return f"{F}{w}{v}"
 
-    return (F + str(w, 'utf-8') + str(v, 'utf-8'))
-
-
-def is_valid_date(strdate):
+def is_valid_date(s):
     try:
-        if ":" in strdate:
-            time.strptime(strdate, "%H:%M")
+        if ':' in s:
+            time.strptime(s, "%H:%M")
         else:
             return False
         return True
     except:
         return False
 
-
-def saveXML(root, filename, indent="\t", newl="\n", encoding="utf-8"):
+def saveXML(root, filename):
     rawText = ET.tostring(root)
     dom = minidom.parseString(rawText)
-    with codecs.open(filename, 'w', 'utf-8') as f:
-        dom.writexml(f, "", indent, newl, encoding)
+    with codecs.open(filename, 'w', encoding='utf-8') as f:
+        dom.writexml(f, indent='\t', newl='\n', encoding='utf-8')
 
+def parse_time(time_str):
+    formats = [
+        "%Y-%m-%d %H:%M",
+        "%Y/%m/%d %H:%M",
+        "%m-%d %H:%M",
+        "%Y%m%d%H%M"
+    ]
+    for fmt in formats:
+        try:
+            return datetime.strptime(time_str, fmt)
+        except ValueError:
+            pass
+    return datetime.now()
 
-def get_program_info(link, sublink, week_day, id_name):
-    st = []
+def get_program_info(link, sublink, week_day, channel_id):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:59.0) Gecko/20100101 Firefox/59.0',
         'Connection': 'keep-alive',
         'Cache-Control': 'no-cache'
     }
-    website = f"{link}{sublink}{week_day}.html"
-    r = requests.get(website, headers=headers)
-    soup = BeautifulSoup(r.text, 'lxml')
-
-    list_program_div = soup.find('ul', id="pgrow").find_all('div', class_="over_hide")
-
+    url = f"{link}{sublink}{week_day}.html"
+    logging.debug(f"Fetching URL: {url}")
+    
+    try:
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Failed to fetch {url}: {e}")
+        return []
+    
+    soup = BeautifulSoup(response.text, 'lxml')
+    program_list = soup.find('ul', id="pgrow").find_all('div', class_="over_hide")
+    
+    programs = []
     current_year = datetime.now().year
-
-    for program in list_program_div:
-        temp_title = program.find("span", class_="p_show")
-        title = temp_title.text.strip() if temp_title else "未知节目"
-
-        time_div = program.contents[0].text.strip()
-        # 调整正则表达式，确保正确匹配日期和时间
-        date_match = re.search(r'(\d{1,2}-\d{1,2})(?=\D|$)', time_div)  # 匹配末尾或非数字结尾的日期
-        time_match = re.search(r'(\d{1,2}:\d{2})', time_div)           # 匹配时间部分
-
-        date_part = date_match.group(1) if date_match else '01-01'
+    
+    for program in program_list:
+        title_element = program.find("span", class_="p_show")
+        title = title_element.text.strip() if title_element else "未知节目"
+        
+        time_div = program.contents[0].strip()
+        logging.debug(f"Parsing time string: {time_div}")
+        
+        # 改进的日期时间解析
+        date_match = re.search(r'(\d{1,2}-\d{1,2})|(\d{1,2}/\d{1,2})', time_div)
+        time_match = re.search(r'(\d{1,2}:\d{2})', time_div)
+        
+        date_part = None
+        if date_match:
+            date_candidate = date_match.group(1) or date_match.group(2)
+            if not date_candidate:
+                continue
+            # 统一格式为yyyy-mm-dd
+            date_parts = re.sub(r'([/-])', '-', date_candidate).split('-')
+            if len(date_parts) != 3:
+                continue
+            try:
+                date_obj = datetime.strptime(f"{current_year}-{date_parts[0]}-{date_parts[1]}", "%Y-%m-%d")
+                date_part = date_obj.strftime("%Y-%m-%d")
+            except ValueError:
+                logging.warning(f"Invalid date format: {date_candidate}")
+        
         time_part = time_match.group(1) if time_match else '00:00'
-
+        
+        # 处理时间
         try:
-            t_time = datetime.strptime(f"{current_year}-{date_part} {time_part}", '%Y-%m-%d %H:%M')
-        except ValueError:
-            try:
-                t_time = datetime.strptime(f"{current_year + 1}-{date_part} {time_part}", '%Y-%m-%d %H:%M')
-            except:
-                t_time = datetime(current_year, 1, 1, 0, 0)
+            dt = parse_time(f"{date_part or current_year}-01-01 {time_part}")
+        except:
+            dt = datetime.now()
+        
+        startime = dt.strftime("%Y%m%d%H%M%S")
+        endtime = startime  # 临时设置
+        
+        programs.append({
+            "ch_title": channel_id,
+            "startime": startime,
+            "title": title,
+            "endtime": endtime
+        })
+    
+    # 排序并分配时段
+    if not programs:
+        return []
+    
+    # 按开始时间排序
+    programs.sort(key=lambda x: x['startime'])
+    
+    # 生成时间段
+    for i in range(len(programs)):
+        if i == 0:
+            prev_end = datetime.strptime(programs[i]['startime'], "%Y%m%d%H%M%S").replace(second=59)
+        else:
+            prev_end = datetime.strptime(programs[i-1]['endtime'], "%Y%m%d%H%M%S")
+        
+        current_start = datetime.strptime(programs[i]['startime'], "%Y%m%d%H%M%S")
+        
+        if current_start < prev_end:
+            new_start = prev_end
+            programs[i]['startime'] = new_start.strftime("%Y%m%d%H%M%S")
+            programs[i]['endtime'] = new_start.replace(second=59).strftime("%Y%m%d%H%M%S")
+        else:
+            programs[i]['endtime'] = current_start.replace(second=59).strftime("%Y%m%d%H%M%S")
+    
+    # 添加默认首播节目
+    first_program = programs[0]
+    if not first_program['startime'].startswith(get_year()):
+        default_start = datetime.now().replace(hour=0, minute=0, second=0).strftime("%Y%m%d%H%M%S")
+        programs.insert(0, {
+            "ch_title": channel_id,
+            "startime": default_start,
+            "title": "开台节目",
+            "endtime": first_program['startime']
+        })
+    
+    return programs
 
-        startime = t_time.strftime("%Y%m%d%H%M%S")
-        pro_dic = {"ch_title": id_name, "startime": startime, "title": title, "endtime": "000000"}
-        st.append(pro_dic)
-
-    if st:
-        first_pro = st[0]
-        if not first_pro['startime'].startswith(str(current_year)):
-            t1 = datetime(current_year, 1, 1, 0, 0).strftime("%Y%m%d%H%M%S")
-            st.insert(0, {"ch_title": id_name, "startime": t1, "title": "未知节目", "endtime": first_pro['startime']})
-
-    for i in range(len(st) - 1):
-        st[i]['endtime'] = st[i + 1]['startime']
-
-    if st:
-        last_pro = st[-1]
-        end_time = datetime.strptime(last_pro['startime'], "%Y%m%d%H%M%S").replace(hour=23, minute=59, second=59)
-        st[-1]['endtime'] = end_time.strftime("%Y%m%d%H%M%S")
-
-    return st
-
-
-def write_tvmao_xml(tv_channel):
-    link = "https://www.tvmao.com"
-    week = get_week()
-    for w in week:
-        for c, u in tv_channel.items():
-            sublink = u[0]
-            channel_id = u[1]
-            try:
-                programs = get_program_info(link, sublink, w, channel_id)
-            except requests.exceptions.HTTPError as e:
-                print(f"请求失败：{c}，状态码：{e.response.status_code}")
-                continue
-            except Exception as e:
-                print(f"获取{c}节目表失败: {str(e)}")
-                continue
-
+def write_tvmao_xml(channel_dict, root):
+    for channel_name, (sublink, channel_id) in channel_dict.items():
+        logging.info(f"Processing channel: {channel_name}")
+        week_days = get_week()
+        for day in week_days:
+            url = f"https://www.tvmao.com{sublink}{day}.html"
+            programs = get_program_info(url, sublink, day, channel_id)
+            
             # 创建或更新频道节点
             channel_node = None
             for node in root.findall('channel'):
@@ -166,17 +188,16 @@ def write_tvmao_xml(tv_channel):
                     break
             if not channel_node:
                 channel_node = ET.SubElement(root, 'channel', id=channel_id)
-                ET.SubElement(channel_node, 'display-name', lang='zh').text = c
-
-            # 添加节目单
+                ET.SubElement(channel_node, 'display-name', lang='zh').text = channel_name
+            
+            # 添加节目节点
             for prog in programs:
-                programme = ET.SubElement(root, 'programme',
-                                          start=f"{prog['startime']} +0800",
-                                          stop=f"{prog['endtime']} +0800",
-                                          channel=channel_id)
-                ET.SubElement(programme, 'title', lang='zh').text = prog['title']
-
-            print(f"已处理频道: {c}")
+                programme_node = ET.SubElement(channel_node, 'programme',
+                                                start=f"{prog['startime']} +0800",
+                                                stop=f"{prog['endtime']} +0800",
+                                                channel=channel_id)
+                title_node = ET.SubElement(programme_node, 'title', lang='zh')
+                title_node.text = prog['title']
 
 tvmao_ws_dict = {
     '北京卫视': ['/program_satellite/BTV1-w', 'BTV1'],
@@ -265,13 +286,18 @@ tvmao_df_dict = {
     '江西陶瓷': ['/program/JXTV-TAOCI-w', 'TAOCI'],
     '江西休闲影视':  ['/program/JXTV-JXXXYS-w', 'JXXXYS']
  }
-root = ET.Element('tv')
+def main():
+    root = ET.Element('tv')
+    
+    # 分别处理三个频道字典
+    write_tvmao_xml(tvmao_ys_dict, root)
+    write_tvmao_xml(tvmao_ws_dict, root)
+    write_tvmao_xml(tvmao_df_dict, root)
+    
+    # 保存XML文件
+    saveXML(root, "tvmao.xml")
+    logging.info("EPG生成完成！")
 
-print("开始生成节目数据...")
-write_tvmao_xml(tvmao_ys_dict)
-write_tvmao_xml(tvmao_ws_dict)
-write_tvmao_xml(tvmao_df_dict)
+if __name__ == "__main__":
+    main()
 
-print("保存XML文件...")
-saveXML(root, "tvmao.xml")
-print("EPG生成完成！")
