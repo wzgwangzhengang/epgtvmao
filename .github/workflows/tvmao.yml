@@ -8,7 +8,7 @@ on:
 jobs:
   update-epg:
     runs-on: ubuntu-latest
- 
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -28,19 +28,29 @@ jobs:
     - name: Run EPG Generator
       run: |
         python tvmao.py || echo "运行遇到错误，检查日志"
-        cat tvmao.log  # 输出日志
+        cat tvmao.log
+
+    - name: Check XML file
+      id: check_xml
+      run: |
+        if [ -s tvmao.xml ]; then
+          echo "xml_exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "xml_exists=false" >> $GITHUB_OUTPUT
+        fi
 
     - name: Configure Git
       run: |
         git config user.name "${{ github.actor }}"
-        git config user.email "${{ github.actor@github.com }}"
-        
+        git config user.email "${{ github.actor }}@users.noreply.github.com"
+
     - name: Commit and Push
-      if: [ -s tvmao.xml ]
+      if: steps.check_xml.outputs.xml_exists == 'true'
       run: |
         git add tvmao.xml tvmao.log
         git commit -m "EPG自动更新 $(date +'%Y-%m-%d %H:%M')"
         git push
-      else:
-        run: echo "XML文件为空，跳过提交"
-  
+
+    - name: Skip Commit
+      if: steps.check_xml.outputs.xml_exists != 'true'
+      run: echo "XML文件为空，跳过提交"
