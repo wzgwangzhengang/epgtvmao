@@ -141,7 +141,6 @@ def get_program_info(link, sublink, week_day, id_name):
 
     return st
 
-
 def write_tvmao_xml(tv_channel):
     link = "https://www.tvmao.com"
     week = get_week()
