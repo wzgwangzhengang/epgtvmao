@@ -157,7 +157,9 @@ root = ET.Element('tv', {
 tv_channels = {
     '北京卫视': ['/program/BTV-BTV1-w', 'BTV1'],
     'CCTV-1综合': ['/program/CCTV-CCTV1-w', 'CCTV1'],
-    # ... 添加其他频道
+    '湖南卫视': ['/program/HNTV-HNTV-w', 'HNTV'],
+    '东方卫视': ['/program/DONGFANGTV-DONGFANGTV-w', 'DFTV'],
+    # 添加更多频道
 }
 
 if __name__ == "__main__":
