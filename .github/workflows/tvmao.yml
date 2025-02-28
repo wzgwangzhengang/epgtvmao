@@ -44,4 +44,4 @@ jobs:
         git push
       else:
         run: echo "XML文件为空，跳过提交"
-        exit 1
+  
