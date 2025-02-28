@@ -88,11 +88,19 @@ def saveXML(root, filename, indent="\t", newl="\n", encoding="utf-8"):
 
 def get_program_info(link, sublink, week_day, id_name):
     st = []
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:59.0) Gecko/20100101 Firefox/59.0',
-        'Connection': 'keep-alive',
-        'Cache-Control': 'no-cache'
-    }
+   headers = {
+    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Mobile/15E148 Safari/604.1',
+    'Connection': 'keep-alive',
+    'Cache-Control': 'no-cache',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
+    'Referer': 'https://m.tvmao.com/',
+    'Sec-Fetch-Dest': 'document',
+    'Sec-Fetch-Mode': 'navigate',
+    'Sec-Fetch-Site': 'same-origin',
+    'Sec-Fetch-User': '?1',
+    'Upgrade-Insecure-Requests': '1'
+}
     website = f"{link}{sublink}{week_day}.html"
     r = requests.get(website, headers=headers)
     soup = BeautifulSoup(r.text, 'lxml')
@@ -142,7 +150,7 @@ def get_program_info(link, sublink, week_day, id_name):
     return st
 
 def write_tvmao_xml(tv_channel):
-    link = "https://m.tvmao.com"
+    link = "https://www.tvmao.com"
     week = get_week()
     for w in week:
         for c, u in tv_channel.items():
