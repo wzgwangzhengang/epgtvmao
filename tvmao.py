@@ -155,11 +155,10 @@ root = ET.Element('tv', {
 
 # 频道配置（根据需要修改）
 tv_channels = {
-    '北京卫视': ['/program/BTV-BTV1-w', 'BTV1'],
-    'CCTV-1综合': ['/program/CCTV-CCTV1-w', 'CCTV1'],
-    '湖南卫视': ['/program/HNTV-HNTV-w', 'HNTV'],
-    '东方卫视': ['/program/DONGFANGTV-DONGFANGTV-w', 'DFTV'],
-    # 添加更多频道
+    '北京卫视': ['/program/BTV1-w', 'BTV1'],
+    'CCTV-1综合': ['/program/CCTV1-w', 'CCTV1'],  # 原路径错误，去除重复前缀
+    '湖南卫视': ['/program/HNTV-w', 'HNTV'],
+    '东方卫视': ['/program/DFWS-w', 'DFTV'],  # 使用网站实际路径
 }
 
 if __name__ == "__main__":
