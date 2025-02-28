@@ -24,24 +24,29 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install requests beautifulsoup4 lxml xmlschema
+        pip install requests beautifulsoup4 lxml
 
     - name: Run EPG Generator
       run: |
         python tvmao.py || echo "运行遇到错误，检查日志"
         cat tvmao.log  # 输出日志
 
-    - name: Commit changes
-      if: always()
+    - name: Configure Git
       run: |
-        git config user.name "${{ secrets.GITHUB_ACTOR }}"
-        git config user.email "${{ secrets.GITHUB_ACTOR@github.com }}"
+        # ✅ 使用预定义变量（以 GitHub Action 执行者身份提交）
+        git config user.name "${{ github.actor }}"
+        git config user.email "${{ github.actor@github.com }}"
         
-        if [ -s tvmao.xml ]; then
-          git add tvmao.xml tvmao.log
-          git commit -m "EPG自动更新 $(date +'%Y-%m-%d %H:%M')"
-          git push
-        else
-          echo "XML文件为空，跳过提交"
-          exit 1
-        fi
+        # 或 ✅ 使用自定义 Secrets（以指定用户身份提交）
+        # git config user.name "${{ secrets.GITHUB_USER }}"
+        # git config user.email "${{ secrets.GITHUB_EMAIL }}"
+
+    - name: Commit and Push
+      if: [ -s tvmao.xml ]
+      run: |
+        git add tvmao.xml tvmao.log
+        git commit -m "EPG自动更新 $(date +'%Y-%m-%d %H:%M')"
+        git push
+      else:
+        run: echo "XML文件为空，跳过提交"
+        exit 1
