@@ -4,6 +4,7 @@ import requests
 from bs4 import BeautifulSoup as bs
 from dateutil import tz
 import gzip
+import random
 
 # 定义需要抓取的频道
 tvmao_ws_dict = {
@@ -115,7 +116,7 @@ def get_epg(channel_name, channel_id, dt):
     need_date = dt
     delta = need_date - now_date
     now_weekday = now_date.weekday()
-    need_weekday = now_weekday + delta.days + 1
+    need_weekday = (now_weekday + delta.days) % 7 + 1  # 计算正确的星期数
     url = f"https://lighttv.tvmao.com/qa/qachannelschedule?epgCode={channel_id}&op=getProgramByChnid&epgName=&isNew=on&day={need_weekday}"
     try:
         res = requests.get(url, headers=headers)
@@ -192,6 +193,7 @@ def main():
                 all_epgs.extend(ret["epgs"])
             else:
                 print(f"获取 {channel_name} 的节目表失败: {ret['msg']}")
+            time.sleep(random.uniform(1, 3))  # 随机等待1-3秒，避免被封禁
     
     # 将所有节目表保存到一个 XML 文件中
     save_epg_to_xml(all_epgs)
