@@ -1,183 +1,10 @@
-# -*- coding: utf-8 -*-
-import re
-import requests
+import datetime
 import time
-import codecs
-import base64
-import xml.etree.ElementTree as ET
-from bs4 import BeautifulSoup
-from datetime import datetime, timedelta
-from xml.dom import minidom
-from fake_useragent import UserAgent
+import requests
+from bs4 import BeautifulSoup as bs
+from dateutil import tz
 
-def get_random_headers():
-    ua = UserAgent()
-    return {
-        'User-Agent': ua.random,
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
-        'Referer': 'https://m.tvmao.com/',
-        'Sec-Fetch-Dest': 'document',
-        'Sec-Fetch-Mode': 'navigate',
-        'Sec-Fetch-Site': 'same-origin',
-        'Sec-Fetch-User': '?1',
-        'Upgrade-Insecure-Requests': '1'
-    }
-
-def get_year():
-    return datetime.now().strftime('%Y')
-
-def get_week():
-    now = datetime.now()
-    week = now.strftime('%w')
-    wd = int(week)
-    return [str(wd)] if wd != 0 else [str(7)]
-
-def get_time(times):
-    return time.strftime("%Y%m%d%H%M%S", time.localtime(int(times)))
-
-def get_tomorrow():
-    today = datetime.today()
-    return [today.strftime('%Y%m%d'), (today + timedelta(days=1)).strftime('%Y%m%d')]
-
-def sub_req(a, q, id):
-    _keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
-    str1 = "|" + q
-    v = base64.b64encode(str1.encode('utf-8'))
-    str2 = id + "|" + a
-    w = base64.b64encode(str2.encode('utf-8'))
-    str3 = time.strftime("%w")
-    wday = 7 if int(str3) == 0 else int(str3)
-    F = _keyStr[wday * wday]
-    return F + str(w, 'utf-8') + str(v, 'utf-8')
-
-def is_valid_date(strdate):
-    try:
-        if ":" in strdate:
-            time.strptime(strdate, "%H:%M")
-        else:
-            return False
-        return True
-    except:
-        return False
-
-def saveXML(root, filename, indent="\t", newl="\n", encoding="utf-8"):
-    try:
-        rawText = ET.tostring(root)
-        dom = minidom.parseString(rawText)
-        with codecs.open(filename, 'w', 'utf-8') as f:
-            dom.writexml(f, "", indent, newl, encoding)
-        print(f"XML 文件已保存: {filename}")
-    except Exception as e:
-        print(f"保存 XML 文件时发生错误: {str(e)}")
-
-def get_program_info(link, sublink, week_day, id_name):
-    st = []
-    current_year = datetime.now().year
-    website = f"{link}{sublink}{week_day}.html"
-
-    for retry in range(3):  # 添加重试机制
-        try:
-            r = requests.get(website, headers=get_random_headers(), timeout=10)
-            r.raise_for_status()
-            break
-        except requests.exceptions.RequestException as e:
-            if retry == 2:
-                print(f"请求失败: {website}, 错误: {str(e)}")
-                return []  # 返回空列表，而不是中断脚本
-            time.sleep(2 ** retry)  # 指数退避
-
-    try:
-        soup = BeautifulSoup(r.text, 'lxml')
-        list_program_div = soup.find('ul', id="pgrow").find_all('div', class_="over_hide")
-
-        for program in list_program_div:
-            temp_title = program.find("span", class_="p_show")
-            title = temp_title.text.strip() if temp_title else "未知节目"
-
-            time_div = program.contents[0].text.strip()
-            date_match = re.search(r'(\d{1,2}-\d{1,2})(?=\D|$)', time_div)  # 匹配日期部分
-            time_match = re.search(r'(\d{1,2}:\d{2})', time_div)  # 匹配时间部分
-
-            date_part = date_match.group(1) if date_match else '01-01'
-            time_part = time_match.group(1) if time_match else '00:00'  # 如果没有时间部分，默认设为 00:00
-
-            try:
-                # 尝试解析日期和时间
-                t_time = datetime.strptime(f"{current_year}-{date_part} {time_part}", '%Y-%m-%d %H:%M')
-            except ValueError:
-                try:
-                    # 如果日期格式包含中文（如12月31日），替换为标准的日期格式
-                    date_part = re.sub(r'[月日]', '-', date_part).strip('-')
-                    t_time = datetime.strptime(f"{current_year}-{date_part} {time_part}", '%Y-%m-%d %H:%M')
-                except Exception as e:
-                    print(f"时间解析失败: {date_part} {time_part}, 错误: {str(e)}")
-                    t_time = datetime(current_year, 1, 1, 0, 0)  # 如果解析失败，使用默认时间
-
-            startime = t_time.strftime("%Y%m%d%H%M%S")
-            pro_dic = {"ch_title": id_name, "startime": startime, "title": title, "endtime": "000000"}
-            st.append(pro_dic)
-
-        # 处理节目时间段的逻辑
-        if st:
-            first_pro = st[0]
-            if not first_pro['startime'].startswith(str(current_year)):
-                t1 = datetime(current_year, 1, 1, 0, 0).strftime("%Y%m%d%H%M%S")
-                st.insert(0, {"ch_title": id_name, "startime": t1, "title": "未知节目", "endtime": first_pro['startime']})
-
-        for i in range(len(st) - 1):
-            st[i]['endtime'] = st[i + 1]['startime']
-
-        if st:
-            last_pro = st[-1]
-            end_time = datetime.strptime(last_pro['startime'], "%Y%m%d%H%M%S").replace(hour=23, minute=59, second=59)
-            st[-1]['endtime'] = end_time.strftime("%Y%m%d%H%M%S")
-
-    except Exception as e:
-        print(f"处理频道 {id_name} 时发生错误: {str(e)}")
-        return []  # 返回空列表，而不是中断脚本
-
-    return st
-
-def write_tvmao_xml(tv_channel):
-    link = "https://www.tvmao.com"
-    week = get_week()
-    for w in week:
-        for c, u in tv_channel.items():
-            sublink = u[0]
-            channel_id = u[1]
-            try:
-                # 确保 URL 拼接正确
-                website = f"{link}{sublink}{w}.html"
-                print(f"正在处理频道: {c}, URL: {website}")
-                programs = get_program_info(link, sublink, w, channel_id)
-            except Exception as e:
-                print(f"获取 {c} 节目表失败: {str(e)}")
-                continue
-
-            try:
-                # 创建或更新频道节点
-                channel_node = None
-                for node in root.findall('channel'):
-                    if node.get('id') == channel_id:
-                        channel_node = node
-                        break
-                if not channel_node:
-                    channel_node = ET.SubElement(root, 'channel', id=channel_id)
-                    ET.SubElement(channel_node, 'display-name', lang='zh').text = c
-
-                # 添加节目单
-                for prog in programs:
-                    programme = ET.SubElement(root, 'programme',
-                                              start=f"{prog['startime']} +0800",
-                                              stop=f"{prog['endtime']} +0800",
-                                              channel=channel_id)
-                    ET.SubElement(programme, 'title', lang='zh').text = prog['title']
-
-                print(f"已处理频道: {c}")
-            except Exception as e:
-                print(f"处理频道 {c} 时发生错误: {str(e)}")
-
+# 定义需要抓取的频道
 tvmao_ws_dict = {
     '北京卫视': ['/program_satellite/BTV1-w', 'BTV1'],
     '卡酷少儿': ['/program_satellite/BTV10-w', 'BTV10'],
@@ -223,6 +50,7 @@ tvmao_ws_dict = {
     '黄河卫视': ['/program_satellite/HHWS-w', 'HHWS'],
     '三沙卫视': ['/program_satellite/SANSHATV-w', 'SANSHATV']
 }
+
 tvmao_ys_dict = {
     'CCTV-1综合': ['/program/CCTV-CCTV1-w', 'CCTV1'],
     'CCTV-2财经': ['/program/CCTV-CCTV2-w', 'CCTV2'],
@@ -251,6 +79,7 @@ tvmao_ys_dict = {
     'CGTN阿语': ['/program/CCTV-CCTVA-w', 'CCTVA'],
     'CGTN俄语': ['/program/CCTV-CCTVR-w', 'CCTVR']
 }
+
 tvmao_df_dict = {
     '江西都市': ['/program/JXTV-JXTV2-w', 'JXTV2'],
     '江西经济生活': ['/program/JXTV-JXTV3-w', 'JXTV3'],
@@ -264,14 +93,101 @@ tvmao_df_dict = {
     '江西移动': ['/program/JXTV-JXTV8-w', 'JXTV8'],
     '江西陶瓷': ['/program/JXTV-TAOCI-w', 'TAOCI'],
     '江西休闲影视':  ['/program/JXTV-JXXXYS-w', 'JXXXYS']
- }
-root = ET.Element('tv')
+}
 
-print("开始生成节目数据...")
-write_tvmao_xml(tvmao_ys_dict)
-write_tvmao_xml(tvmao_ws_dict)
-write_tvmao_xml(tvmao_df_dict)
+# 合并所有频道
+tvmao_all_channels = {**tvmao_ws_dict, **tvmao_ys_dict, **tvmao_df_dict}
 
-print("保存XML文件...")
-saveXML(root, "tvmao.xml")
-print("EPG生成完成！")
+# 设置请求头
+headers = {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36",
+}
+
+# 获取节目表的核心程序
+def get_epg(channel_name, channel_id, dt):
+    epgs = []
+    msg = ""
+    success = 1
+    ban = 0  # 标识是否被BAN掉了
+    now_date = datetime.datetime.now().date()
+    need_date = dt
+    delta = need_date - now_date
+    now_weekday = now_date.weekday()
+    need_weekday = now_weekday + delta.days + 1
+    url = f"https://lighttv.tvmao.com/qa/qachannelschedule?epgCode={channel_id}&op=getProgramByChnid&epgName=&isNew=on&day={need_weekday}"
+    try:
+        res = requests.get(url, headers=headers)
+        res_j = res.json()
+        datas = res_j[2]["pro"]
+        for data in datas:
+            title = data["name"]
+            starttime_str = data["time"]
+            starttime = datetime.datetime.combine(
+                dt, datetime.time(int(starttime_str[:2]), int(starttime_str[-2:]))
+            epg = {
+                "channel_id": channel_id,
+                "starttime": starttime,
+                "endtime": None,
+                "title": title,
+                "desc": "",
+                "program_date": dt,
+            }
+            epgs.append(epg)
+    except Exception as e:
+        success = 0
+        msg = f"spider-tvmao-{e}"
+    ret = {
+        "success": success,
+        "epgs": epgs,
+        "msg": msg,
+        "last_program_date": dt,
+        "ban": 0,
+        "source": "tvmao",
+    }
+    return ret
+
+# 将 EPG 数据保存为 XML 文件
+def save_epg_to_xml(all_epgs):
+    xmlhead = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE tv SYSTEM "http://api.torrent-tv.ru/xmltv.dtd"><tv generator-info-name="mxd-epg-xml" generator-info-url="https://epg.mxdyeah.top/">'
+    xmlbottom = "</tv>"
+    tz_sh = tz.gettz("Asia/Shanghai")
+    tz_str = " +0800"
+    xmldir = "tvmao.xml"
+
+    with open(xmldir, "w", encoding="utf-8") as f:
+        f.write(xmlhead)
+        # 写入频道信息
+        for channel_name, channel_info in tvmao_all_channels.items():
+            channel_id = channel_info[1]
+            c = f'<channel id="{channel_id}"><display-name lang="zh">{channel_name}</display-name></channel>'
+            f.write(c)
+        # 写入节目信息
+        for epg in all_epgs:
+            start = epg["starttime"].astimezone(tz=tz_sh).strftime("%Y%m%d%H%M%S") + tz_str
+            end = epg["endtime"].astimezone(tz=tz_sh).strftime("%Y%m%d%H%M%S") + tz_str if epg["endtime"] else start
+            title = epg["title"].replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("'", "&apos;").replace('"', "&quot;")
+            desc = epg["desc"].replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("'", "&apos;").replace('"', "&quot;")
+            programinfo = f'<programme start="{start}" stop="{end}" channel="{epg["channel_id"]}"><title lang="zh">{title}</title><desc lang="zh">{desc}</desc></programme>'
+            f.write(programinfo)
+        f.write(xmlbottom)
+
+    print(f"已经生成 XML 文件：{xmldir}")
+
+# 主函数
+def main():
+    dt = datetime.datetime.now().date()  # 获取当前日期
+    all_epgs = []  # 存储所有频道的节目表
+    for channel_name, channel_info in tvmao_all_channels.items():
+        channel_url_part, channel_id = channel_info
+        ret = get_epg(channel_name, channel_id, dt)
+        if ret["success"]:
+            all_epgs.extend(ret["epgs"])
+        else:
+            print(f"获取 {channel_name} 的节目表失败: {ret['msg']}")
+    
+    # 将所有节目表保存到一个 XML 文件中
+    save_epg_to_xml(all_epgs)
+
+if __name__ == "__main__":
+    main()
