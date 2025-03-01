@@ -23,7 +23,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install requests beautifulsoup4 lxml fake-useragent python-dateutil
+        pip install requests beautifulsoup4 lxml fake-useragent python-dateutil gzip
 
     - name: Run EPG Generator
       run: |
@@ -44,13 +44,23 @@ jobs:
           exit 1
         fi
 
+    - name: Debug GZ File
+      run: |
+        if [ -s tvmao.xml.gz ]; then
+          echo "GZ 文件存在且非空"
+          echo "GZ 文件大小：$(du -h tvmao.xml.gz | cut -f1)"
+        else
+          echo "::error::GZ文件为空或不存在"
+          exit 1
+        fi
+
     - name: Commit and Push Changes
       run: |
         git config --global user.name "GitHub Actions"
         git config --global user.email "actions@github.com"
 
-        if [ -s tvmao.xml ]; then
-          git add tvmao.xml
+        if [ -s tvmao.xml ] && [ -s tvmao.xml.gz ]; then
+          git add tvmao.xml tvmao.xml.gz
           COMMIT_TIME=$(date +'%Y-%m-%d %H:%M (CST)')
           COMMIT_MSG="EPG自动更新 $COMMIT_TIME"
 
@@ -63,6 +73,6 @@ jobs:
             echo "::warning ::没有检测到文件变更，跳过提交"
           fi
         else
-          echo "::error::XML文件为空或不存在，跳过提交"
+          echo "::error::XML或GZ文件为空或不存在，跳过提交"
           exit 1
         fi
