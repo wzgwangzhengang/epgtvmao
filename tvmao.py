@@ -121,20 +121,30 @@ def get_epg(channel_name, channel_id, dt):
     try:
         res = requests.get(url, headers=headers)
         res_j = res.json()
-        datas = res_j[2]["pro"]
-        for data in datas:
-            title = data["name"]
-            starttime_str = data["time"]
-            starttime = datetime.datetime.combine(dt, datetime.time(int(starttime_str[:2]), int(starttime_str[-2:])))
-            epg = {
-                "channel_id": channel_id,
-                "starttime": starttime,
-                "endtime": None,
-                "title": title,
-                "desc": "",
-                "program_date": dt,
-            }
-            epgs.append(epg)
+        
+        # 检查返回的 JSON 数据结构
+        if isinstance(res_j, list) and len(res_j) > 2 and "pro" in res_j[2]:
+            datas = res_j[2]["pro"]
+            for data in datas:
+                title = data["name"]
+                starttime_str = data["time"]
+                starttime = datetime.datetime.combine(dt, datetime.time(int(starttime_str[:2]), int(starttime_str[-2:])))
+                epg = {
+                    "channel_id": channel_id,
+                    "starttime": starttime,
+                    "endtime": None,
+                    "title": title,
+                    "desc": "",
+                    "program_date": dt,
+                }
+                epgs.append(epg)
+        elif isinstance(res_j, list) and len(res_j) == 2 and res_j[0] == 0 and res_j[1] == '':
+            # 处理没有节目数据的情况
+            success = 0
+            msg = f"spider-tvmao-No program data for {channel_name}"
+        else:
+            success = 0
+            msg = f"spider-tvmao-API returned unexpected data structure: {res_j}"
     except Exception as e:
         success = 0
         msg = f"spider-tvmao-{e}"
@@ -183,16 +193,25 @@ def save_epg_to_xml(all_epgs):
 
 # 主函数
 def main():
-    dt = datetime.datetime.now().date()  # 获取当前日期
-    #dt = 5
     all_epgs = []  # 存储所有频道的节目表
-    for channel_name, channel_info in tvmao_all_channels.items():
-        channel_url_part, channel_id = channel_info
-        ret = get_epg(channel_name, channel_id, dt)
-        if ret["success"]:
-            all_epgs.extend(ret["epgs"])
-        else:
-            print(f"获取 {channel_name} 的节目表失败: {ret['msg']}")
+    now_date = datetime.datetime.now().date()  # 当前日期
+    now_weekday = now_date.weekday()  # 当前星期几（0=周一，6=周日）
+
+    for i in range(5):  # 抓取当天及后四天的节目单
+        dt = now_date + datetime.timedelta(days=i)  # 计算目标日期
+        delta_days = (dt - now_date).days  # 计算与当前日期的差值
+        need_weekday = (now_weekday + delta_days) % 7 + 1  # 计算正确的星期数（W1-W7，跨周后 W8-W14）
+
+        print(f"正在抓取日期: {dt}，星期数: W{need_weekday}")
+
+        for channel_name, channel_info in tvmao_all_channels.items():
+            channel_url_part, channel_id = channel_info
+            ret = get_epg(channel_name, channel_id, dt)
+            if ret["success"]:
+                all_epgs.extend(ret["epgs"])
+            else:
+                print(f"获取 {channel_name} 的节目表失败: {ret['msg']}")
+            time.sleep(random.uniform(1, 3))  # 随机等待1-3秒，避免被封禁
     
     # 将所有节目表保存到一个 XML 文件中
     save_epg_to_xml(all_epgs)
