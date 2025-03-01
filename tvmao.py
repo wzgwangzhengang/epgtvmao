@@ -183,8 +183,8 @@ def save_epg_to_xml(all_epgs):
 
 # 主函数
 def main():
-    #dt = datetime.datetime.now().date()  # 获取当前日期
-    dt = 5
+    dt = datetime.datetime.now().date()  # 获取当前日期
+    #dt = 5
     all_epgs = []  # 存储所有频道的节目表
     for channel_name, channel_info in tvmao_all_channels.items():
         channel_url_part, channel_id = channel_info
