@@ -1,19 +1,14 @@
 # -*- coding: utf-8 -*-
 import re
 import requests
-import json
 import time
 import codecs
 import base64
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
-from datetime import datetime, date, timedelta
+from datetime import datetime, timedelta
 from xml.dom import minidom
 from fake_useragent import UserAgent
-import logging
-
-# 配置日志
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def get_random_headers():
     ua = UserAgent()
@@ -84,7 +79,7 @@ def get_program_info(link, sublink, week_day, id_name):
             break
         except requests.exceptions.RequestException as e:
             if retry == 2:
-                logging.error(f"请求失败: {website}, 错误: {str(e)}")
+                print(f"请求失败: {website}, 错误: {str(e)}")
                 return []
             time.sleep(2 ** retry)  # 指数退避
 
@@ -111,7 +106,7 @@ def get_program_info(link, sublink, week_day, id_name):
                 date_part = re.sub(r'[月日]', '-', date_part).strip('-')
                 t_time = datetime.strptime(f"{current_year}-{date_part} {time_part}", '%Y-%m-%d %H:%M')
             except Exception as e:
-                logging.error(f"时间解析失败: {date_part} {time_part}, 错误: {str(e)}")
+                print(f"时间解析失败: {date_part} {time_part}, 错误: {str(e)}")
                 t_time = datetime(current_year, 1, 1, 0, 0)  # 如果解析失败，使用默认时间
 
         startime = t_time.strftime("%Y%m%d%H%M%S")
@@ -145,13 +140,13 @@ def write_tvmao_xml(tv_channel):
             try:
                 # 确保 URL 拼接正确
                 website = f"{link}{sublink}{w}.html"
-                logging.info(f"正在处理频道: {c}, URL: {website}")
+                print(f"正在处理频道: {c}, URL: {website}")
                 programs = get_program_info(link, sublink, w, channel_id)
             except requests.exceptions.HTTPError as e:
-                logging.error(f"请求失败：{c}，状态码：{e.response.status_code}")
+                print(f"请求失败：{c}，状态码：{e.response.status_code}")
                 continue
             except Exception as e:
-                logging.error(f"获取{c}节目表失败: {str(e)}")
+                print(f"获取{c}节目表失败: {str(e)}")
                 continue
 
             # 创建或更新频道节点
@@ -172,7 +167,7 @@ def write_tvmao_xml(tv_channel):
                                           channel=channel_id)
                 ET.SubElement(programme, 'title', lang='zh').text = prog['title']
 
-            logging.info(f"已处理频道: {c}")
+            print(f"已处理频道: {c}")
 
 tvmao_ws_dict = {
     '北京卫视': ['/program_satellite/BTV1-w', 'BTV1'],
@@ -263,11 +258,11 @@ tvmao_df_dict = {
  }
 root = ET.Element('tv')
 
-logging.info("开始生成节目数据...")
+print("开始生成节目数据...")
 write_tvmao_xml(tvmao_ys_dict)
 write_tvmao_xml(tvmao_ws_dict)
 write_tvmao_xml(tvmao_df_dict)
 
-logging.info("保存XML文件...")
+print("保存XML文件...")
 saveXML(root, "tvmao.xml")
-logging.info("EPG生成完成！")
+print("EPG生成完成！")
