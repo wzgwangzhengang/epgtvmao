@@ -96,26 +96,29 @@ def get_program_info(link, sublink, week_day, id_name):
         title = temp_title.text.strip() if temp_title else "未知节目"
 
         time_div = program.contents[0].text.strip()
-        date_match = re.search(r'(\d{1,2}-\d{1,2})(?=\D|$)', time_div)
-        time_match = re.search(r'(\d{1,2}:\d{2})', time_div)
+        date_match = re.search(r'(\d{1,2}-\d{1,2})(?=\D|$)', time_div)  # 匹配日期部分
+        time_match = re.search(r'(\d{1,2}:\d{2})', time_div)  # 匹配时间部分
 
         date_part = date_match.group(1) if date_match else '01-01'
-        time_part = time_match.group(1) if time_match else '00:00'
+        time_part = time_match.group(1) if time_match else '00:00'  # 如果没有时间部分，默认设为 00:00
 
         try:
+            # 尝试解析日期和时间
             t_time = datetime.strptime(f"{current_year}-{date_part} {time_part}", '%Y-%m-%d %H:%M')
         except ValueError:
             try:
+                # 如果日期格式包含中文（如12月31日），替换为标准的日期格式
                 date_part = re.sub(r'[月日]', '-', date_part).strip('-')
                 t_time = datetime.strptime(f"{current_year}-{date_part} {time_part}", '%Y-%m-%d %H:%M')
             except Exception as e:
                 logging.error(f"时间解析失败: {date_part} {time_part}, 错误: {str(e)}")
-                t_time = datetime(current_year, 1, 1, 0, 0)
+                t_time = datetime(current_year, 1, 1, 0, 0)  # 如果解析失败，使用默认时间
 
         startime = t_time.strftime("%Y%m%d%H%M%S")
         pro_dic = {"ch_title": id_name, "startime": startime, "title": title, "endtime": "000000"}
         st.append(pro_dic)
 
+    # 处理节目时间段的逻辑
     if st:
         first_pro = st[0]
         if not first_pro['startime'].startswith(str(current_year)):
@@ -140,6 +143,9 @@ def write_tvmao_xml(tv_channel):
             sublink = u[0]
             channel_id = u[1]
             try:
+                # 确保 URL 拼接正确
+                website = f"{link}{sublink}{w}.html"
+                logging.info(f"正在处理频道: {c}, URL: {website}")
                 programs = get_program_info(link, sublink, w, channel_id)
             except requests.exceptions.HTTPError as e:
                 logging.error(f"请求失败：{c}，状态码：{e.response.status_code}")
