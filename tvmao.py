@@ -3,6 +3,7 @@ import time
 import requests
 from bs4 import BeautifulSoup as bs
 from dateutil import tz
+import gzip
 
 # 定义需要抓取的频道
 tvmao_ws_dict = {
@@ -148,7 +149,7 @@ def get_epg(channel_name, channel_id, dt):
 
 # 将 EPG 数据保存为 XML 文件
 def save_epg_to_xml(all_epgs):
-    xmlhead = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE tv SYSTEM "http://api.torrent-tv.ru/xmltv.dtd"><tv generator-info-name="mxd-epg-xml" generator-info-url="https://epg.mxdyeah.top/">'
+    xmlhead = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE tv SYSTEM "http://api.torrent-tv.ru/xmltv.dtd"><tv generator-info-name="mxd-epg-xml" generator-info-url="https://epg.mxdyeah.top/">\n'
     xmlbottom = "</tv>"
     tz_sh = tz.gettz("Asia/Shanghai")
     tz_str = " +0800"
@@ -159,7 +160,7 @@ def save_epg_to_xml(all_epgs):
         # 写入频道信息
         for channel_name, channel_info in tvmao_all_channels.items():
             channel_id = channel_info[1]
-            c = f'<channel id="{channel_id}"><display-name lang="zh">{channel_name}</display-name></channel>'
+            c = f'<channel id="{channel_id}"><display-name lang="zh">{channel_name}</display-name></channel>\n'
             f.write(c)
         # 写入节目信息
         for epg in all_epgs:
@@ -167,23 +168,30 @@ def save_epg_to_xml(all_epgs):
             end = epg["endtime"].astimezone(tz=tz_sh).strftime("%Y%m%d%H%M%S") + tz_str if epg["endtime"] else start
             title = epg["title"].replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("'", "&apos;").replace('"', "&quot;")
             desc = epg["desc"].replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("'", "&apos;").replace('"', "&quot;")
-            programinfo = f'<programme start="{start}" stop="{end}" channel="{epg["channel_id"]}"><title lang="zh">{title}</title><desc lang="zh">{desc}</desc></programme>'
+            programinfo = f'<programme start="{start}" stop="{end}" channel="{epg["channel_id"]}"><title lang="zh">{title}</title><desc lang="zh">{desc}</desc></programme>\n'
             f.write(programinfo)
         f.write(xmlbottom)
 
     print(f"已经生成 XML 文件：{xmldir}")
 
+    # 压缩为 gz 文件
+    with open(xmldir, 'rb') as f_in:
+        with gzip.open('tvmao.xml.gz', 'wb') as f_out:
+            f_out.writelines(f_in)
+    print("已经生成压缩文件：tvmao.xml.gz")
+
 # 主函数
 def main():
-    dt = datetime.datetime.now().date()  # 获取当前日期
     all_epgs = []  # 存储所有频道的节目表
-    for channel_name, channel_info in tvmao_all_channels.items():
-        channel_url_part, channel_id = channel_info
-        ret = get_epg(channel_name, channel_id, dt)
-        if ret["success"]:
-            all_epgs.extend(ret["epgs"])
-        else:
-            print(f"获取 {channel_name} 的节目表失败: {ret['msg']}")
+    for i in range(5):  # 抓取当天及后四天的节目单
+        dt = datetime.datetime.now().date() + datetime.timedelta(days=i)
+        for channel_name, channel_info in tvmao_all_channels.items():
+            channel_url_part, channel_id = channel_info
+            ret = get_epg(channel_name, channel_id, dt)
+            if ret["success"]:
+                all_epgs.extend(ret["epgs"])
+            else:
+                print(f"获取 {channel_name} 的节目表失败: {ret['msg']}")
     
     # 将所有节目表保存到一个 XML 文件中
     save_epg_to_xml(all_epgs)
