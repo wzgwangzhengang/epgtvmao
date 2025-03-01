@@ -34,6 +34,16 @@ jobs:
           exit 1
         fi
 
+    - name: Debug XML File
+      run: |
+        if [ -s tvmao.xml ]; then
+          echo "XML 文件内容："
+          cat tvmao.xml
+        else
+          echo "::error::XML文件为空或不存在"
+          exit 1
+        fi
+
     - name: Commit and Push Changes
       run: |
         git config --global user.name "GitHub Actions"
@@ -43,9 +53,15 @@ jobs:
           git add tvmao.xml
           COMMIT_TIME=$(date +'%Y-%m-%d %H:%M (CST)')
           COMMIT_MSG="EPG自动更新 $COMMIT_TIME"
-          git commit -m "$COMMIT_MSG"
-          git push
-          echo "::notice ::EPG数据已更新并提交"
+
+          # 检查是否有文件变更
+          if ! git diff-index --quiet HEAD --; then
+            git commit -m "$COMMIT_MSG"
+            git push
+            echo "::notice ::EPG数据已更新并提交"
+          else
+            echo "::warning ::没有检测到文件变更，跳过提交"
+          fi
         else
           echo "::error::XML文件为空或不存在，跳过提交"
           exit 1
