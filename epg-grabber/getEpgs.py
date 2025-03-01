@@ -193,6 +193,7 @@ if __name__ == "__main__":
     # 数据源列表
     epg_urls = [
         'https://raw.githubusercontent.com/lxxcp/epg/main/cntvepg.xml.gz',
+        'https://raw.githubusercontent.com/lxxcp/epg/main/tvmao.xml.gz',
         'http://epg.51zmt.top:8000/e.xml.gz',
         'https://epg.v1.mk/fy.xml.gz',
         'https://iptv.crestekk.cn/epgphp/t.xml.gz',
