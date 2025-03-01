@@ -107,39 +107,34 @@ headers = {
 }
 
 # 获取节目表的核心程序
-def get_epg(channel_name, channel_id, dt, need_weekday):
+def get_epg(channel_name, channel_id, dt):
     epgs = []
     msg = ""
     success = 1
     ban = 0  # 标识是否被BAN掉了
+    now_date = datetime.datetime.now().date()
+    need_date = dt
+    delta = need_date - now_date
+    now_weekday = now_date.weekday()
+    need_weekday = (now_weekday + delta.days) % 7 + 1  # 计算正确的星期数
     url = f"https://lighttv.tvmao.com/qa/qachannelschedule?epgCode={channel_id}&op=getProgramByChnid&epgName=&isNew=on&day={need_weekday}"
     try:
         res = requests.get(url, headers=headers)
         res_j = res.json()
-        
-        # 检查返回的 JSON 数据结构
-        if isinstance(res_j, list) and len(res_j) > 2 and "pro" in res_j[2]:
-            datas = res_j[2]["pro"]
-            for data in datas:
-                title = data["name"]
-                starttime_str = data["time"]
-                starttime = datetime.datetime.combine(dt, datetime.time(int(starttime_str[:2]), int(starttime_str[-2:])))
-                epg = {
-                    "channel_id": channel_id,
-                    "starttime": starttime,
-                    "endtime": None,
-                    "title": title,
-                    "desc": "",
-                    "program_date": dt,
-                }
-                epgs.append(epg)
-        elif isinstance(res_j, list) and len(res_j) == 2 and res_j[0] == 0 and res_j[1] == '':
-            # 处理没有节目数据的情况
-            success = 0
-            msg = f"spider-tvmao-No program data for {channel_name}"
-        else:
-            success = 0
-            msg = f"spider-tvmao-API returned unexpected data structure: {res_j}"
+        datas = res_j[2]["pro"]
+        for data in datas:
+            title = data["name"]
+            starttime_str = data["time"]
+            starttime = datetime.datetime.combine(dt, datetime.time(int(starttime_str[:2]), int(starttime_str[-2:])))
+            epg = {
+                "channel_id": channel_id,
+                "starttime": starttime,
+                "endtime": None,
+                "title": title,
+                "desc": "",
+                "program_date": dt,
+            }
+            epgs.append(epg)
     except Exception as e:
         success = 0
         msg = f"spider-tvmao-{e}"
@@ -189,19 +184,11 @@ def save_epg_to_xml(all_epgs):
 # 主函数
 def main():
     all_epgs = []  # 存储所有频道的节目表
-    now_date = datetime.datetime.now().date()  # 当前日期
-    now_weekday = now_date.weekday()  # 当前星期几（0=周一，6=周日）
-
     for i in range(5):  # 抓取当天及后四天的节目单
-        dt = now_date + datetime.timedelta(days=i)  # 计算目标日期
-        delta_days = (dt - now_date).days  # 计算与当前日期的差值
-        need_weekday = (now_weekday + delta_days) % 7 + 1  # 计算正确的星期数（W1-W7，跨周后 W8-W14）
-
-        print(f"正在抓取日期: {dt}，星期数: W{need_weekday}")
-
+        dt = datetime.datetime.now().date() + datetime.timedelta(days=i)
         for channel_name, channel_info in tvmao_all_channels.items():
             channel_url_part, channel_id = channel_info
-            ret = get_epg(channel_name, channel_id, dt, need_weekday)  # 传递 need_weekday
+            ret = get_epg(channel_name, channel_id, dt)
             if ret["success"]:
                 all_epgs.extend(ret["epgs"])
             else:
