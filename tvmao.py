@@ -10,6 +10,10 @@ from bs4 import BeautifulSoup
 from datetime import datetime, date, timedelta
 from xml.dom import minidom
 from fake_useragent import UserAgent
+import logging
+
+# 配置日志
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def get_random_headers():
     ua = UserAgent()
@@ -26,61 +30,31 @@ def get_random_headers():
     }
 
 def get_year():
-    now = datetime.now()
-    year = now.strftime('%Y')
-    return str(year)
+    return datetime.now().strftime('%Y')
 
 def get_week():
     now = datetime.now()
     week = now.strftime('%w')
     wd = int(week)
-    if wd == 0:
-        w = [str(7)]
-    else:
-        w = [str(wd), str(wd + 1)]
-    return w
-
+    return [str(wd)] if wd != 0 else [str(7)]
 
 def get_time(times):
-    time_r = time.strftime("%Y%m%d%H%M%S", time.localtime(int(times)))
-    return time_r
-
-
-def get_tomorrow1():
-    day = []
-    day.append(datetime.today().strftime('%Y-%m-%d'))
-    now = datetime.today()
-    delta = now + timedelta(days=1)
-    date2 = delta.strftime('%Y-%m-%d')
-    day.append(date2)
-    return day
-
+    return time.strftime("%Y%m%d%H%M%S", time.localtime(int(times)))
 
 def get_tomorrow():
-    day = []
-    day.append(datetime.today().strftime('%Y%m%d'))
-    now = datetime.today()
-    delta = now + timedelta(days=1)
-    date2 = delta.strftime('%Y%m%d')
-    day.append(date2)
-    return day
-
+    today = datetime.today()
+    return [today.strftime('%Y%m%d'), (today + timedelta(days=1)).strftime('%Y%m%d')]
 
 def sub_req(a, q, id):
     _keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
-
     str1 = "|" + q
     v = base64.b64encode(str1.encode('utf-8'))
-
     str2 = id + "|" + a
     w = base64.b64encode(str2.encode('utf-8'))
-
     str3 = time.strftime("%w")
-    wday = (7 if (int(str3) == 0) else int(str3))
+    wday = 7 if int(str3) == 0 else int(str3)
     F = _keyStr[wday * wday]
-
-    return (F + str(w, 'utf-8') + str(v, 'utf-8'))
-
+    return F + str(w, 'utf-8') + str(v, 'utf-8')
 
 def is_valid_date(strdate):
     try:
@@ -92,65 +66,50 @@ def is_valid_date(strdate):
     except:
         return False
 
-
 def saveXML(root, filename, indent="\t", newl="\n", encoding="utf-8"):
     rawText = ET.tostring(root)
     dom = minidom.parseString(rawText)
     with codecs.open(filename, 'w', 'utf-8') as f:
         dom.writexml(f, "", indent, newl, encoding)
 
-
 def get_program_info(link, sublink, week_day, id_name):
     st = []
     current_year = datetime.now().year
-    
+    website = f"{link}{sublink}{week_day}.html"
+
     for retry in range(3):  # 添加重试机制
         try:
-            website = f"{link}{sublink}{week_day}.html"
-            r = requests.get(website, 
-                           headers=get_random_headers(),  # 使用随机请求头
-                           timeout=10,  # 添加超时设置
-                           proxies={
-                               'http': 'http://10.10.1.10:3128',
-                               'https': 'http://10.10.1.10:1080',
-                           })  # 可选代理配置
+            r = requests.get(website, headers=get_random_headers(), timeout=10)
             r.raise_for_status()
             break
         except requests.exceptions.RequestException as e:
             if retry == 2:
-                print(f"请求失败: {website}, 错误: {str(e)}")
+                logging.error(f"请求失败: {website}, 错误: {str(e)}")
                 return []
-            time.sleep(2 ​**​ retry)  # 指数退避
-    website = f"{link}{sublink}{week_day}.html"
-    r = requests.get(website, headers=headers)
+            time.sleep(2 ** retry)  # 指数退避
+
     soup = BeautifulSoup(r.text, 'lxml')
-
     list_program_div = soup.find('ul', id="pgrow").find_all('div', class_="over_hide")
-
-    current_year = datetime.now().year
 
     for program in list_program_div:
         temp_title = program.find("span", class_="p_show")
         title = temp_title.text.strip() if temp_title else "未知节目"
 
         time_div = program.contents[0].text.strip()
-        # 调整正则表达式，确保正确匹配日期和时间
-        date_match = re.search(r'(\d{1,2}-\d{1,2})(?=\D|$)', time_div)  # 匹配末尾或非数字结尾的日期
-        time_match = re.search(r'(\d{1,2}:\d{2})', time_div)           # 匹配时间部分
+        date_match = re.search(r'(\d{1,2}-\d{1,2})(?=\D|$)', time_div)
+        time_match = re.search(r'(\d{1,2}:\d{2})', time_div)
 
         date_part = date_match.group(1) if date_match else '01-01'
         time_part = time_match.group(1) if time_match else '00:00'
 
         try:
-    # 尝试解析"月-日 时:分"格式
             t_time = datetime.strptime(f"{current_year}-{date_part} {time_part}", '%Y-%m-%d %H:%M')
         except ValueError:
             try:
-        # 尝试解析带中文的格式（如12月31日 20:30）
                 date_part = re.sub(r'[月日]', '-', date_part).strip('-')
                 t_time = datetime.strptime(f"{current_year}-{date_part} {time_part}", '%Y-%m-%d %H:%M')
             except Exception as e:
-                print(f"时间解析失败: {date_part} {time_part}, 错误: {str(e)}")
+                logging.error(f"时间解析失败: {date_part} {time_part}, 错误: {str(e)}")
                 t_time = datetime(current_year, 1, 1, 0, 0)
 
         startime = t_time.strftime("%Y%m%d%H%M%S")
@@ -183,10 +142,10 @@ def write_tvmao_xml(tv_channel):
             try:
                 programs = get_program_info(link, sublink, w, channel_id)
             except requests.exceptions.HTTPError as e:
-                print(f"请求失败：{c}，状态码：{e.response.status_code}")
+                logging.error(f"请求失败：{c}，状态码：{e.response.status_code}")
                 continue
             except Exception as e:
-                print(f"获取{c}节目表失败: {str(e)}")
+                logging.error(f"获取{c}节目表失败: {str(e)}")
                 continue
 
             # 创建或更新频道节点
@@ -207,7 +166,7 @@ def write_tvmao_xml(tv_channel):
                                           channel=channel_id)
                 ET.SubElement(programme, 'title', lang='zh').text = prog['title']
 
-            print(f"已处理频道: {c}")
+            logging.info(f"已处理频道: {c}")
 
 tvmao_ws_dict = {
     '北京卫视': ['/program_satellite/BTV1-w', 'BTV1'],
@@ -298,11 +257,11 @@ tvmao_df_dict = {
  }
 root = ET.Element('tv')
 
-print("开始生成节目数据...")
+logging.info("开始生成节目数据...")
 write_tvmao_xml(tvmao_ys_dict)
 write_tvmao_xml(tvmao_ws_dict)
 write_tvmao_xml(tvmao_df_dict)
 
-print("保存XML文件...")
+logging.info("保存XML文件...")
 saveXML(root, "tvmao.xml")
-print("EPG生成完成！")
+logging.info("EPG生成完成！")
