@@ -183,17 +183,16 @@ def save_epg_to_xml(all_epgs):
 
 # 主函数
 def main():
+    #dt = datetime.datetime.now().date()  # 获取当前日期
+    dt = 5
     all_epgs = []  # 存储所有频道的节目表
-    for i in range(5):  # 抓取当天及后四天的节目单
-        dt = datetime.datetime.now().date() + datetime.timedelta(days=i)
-        for channel_name, channel_info in tvmao_all_channels.items():
-            channel_url_part, channel_id = channel_info
-            ret = get_epg(channel_name, channel_id, dt)
-            if ret["success"]:
-                all_epgs.extend(ret["epgs"])
-            else:
-                print(f"获取 {channel_name} 的节目表失败: {ret['msg']}")
-            time.sleep(random.uniform(1, 3))  # 随机等待1-3秒，避免被封禁
+    for channel_name, channel_info in tvmao_all_channels.items():
+        channel_url_part, channel_id = channel_info
+        ret = get_epg(channel_name, channel_id, dt)
+        if ret["success"]:
+            all_epgs.extend(ret["epgs"])
+        else:
+            print(f"获取 {channel_name} 的节目表失败: {ret['msg']}")
     
     # 将所有节目表保存到一个 XML 文件中
     save_epg_to_xml(all_epgs)
