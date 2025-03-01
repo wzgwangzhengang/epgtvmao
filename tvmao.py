@@ -121,20 +121,26 @@ def get_epg(channel_name, channel_id, dt):
     try:
         res = requests.get(url, headers=headers)
         res_j = res.json()
-        datas = res_j[2]["pro"]
-        for data in datas:
-            title = data["name"]
-            starttime_str = data["time"]
-            starttime = datetime.datetime.combine(dt, datetime.time(int(starttime_str[:2]), int(starttime_str[-2:])))
-            epg = {
-                "channel_id": channel_id,
-                "starttime": starttime,
-                "endtime": None,
-                "title": title,
-                "desc": "",
-                "program_date": dt,
-            }
-            epgs.append(epg)
+        
+        # 检查返回的 JSON 数据结构
+        if isinstance(res_j, list) and len(res_j) > 2 and "pro" in res_j[2]:
+            datas = res_j[2]["pro"]
+            for data in datas:
+                title = data["name"]
+                starttime_str = data["time"]
+                starttime = datetime.datetime.combine(dt, datetime.time(int(starttime_str[:2]), int(starttime_str[-2:])))
+                epg = {
+                    "channel_id": channel_id,
+                    "starttime": starttime,
+                    "endtime": None,
+                    "title": title,
+                    "desc": "",
+                    "program_date": dt,
+                }
+                epgs.append(epg)
+        else:
+            success = 0
+            msg = f"spider-tvmao-API returned unexpected data structure: {res_j}"
     except Exception as e:
         success = 0
         msg = f"spider-tvmao-{e}"
