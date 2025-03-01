@@ -21,7 +21,7 @@ headers = {
 }
 
 # 获取节目表的核心程序
-def get_epg(channel_name, channel_id, dt):
+def get_epg(channel_name, channel_id, dt, retries=3):
     epgs = []
     msg = ""
     success = 1
@@ -32,36 +32,45 @@ def get_epg(channel_name, channel_id, dt):
     now_weekday = now_date.weekday()
     need_weekday = (now_weekday + delta.days) % 7 + 1  # 计算正确的星期数
     url = f"https://lighttv.tvmao.com/qa/qachannelschedule?epgCode={channel_id}&op=getProgramByChnid&epgName=&isNew=on&day={need_weekday}"
-    try:
-        res = requests.get(url, headers=headers)
-        res_j = res.json()
-        
-        # 检查返回的 JSON 数据结构
-        if isinstance(res_j, list) and len(res_j) > 2 and "pro" in res_j[2]:
-            datas = res_j[2]["pro"]
-            for data in datas:
-                title = data["name"]
-                starttime_str = data["time"]
-                starttime = datetime.datetime.combine(dt, datetime.time(int(starttime_str[:2]), int(starttime_str[-2:])))
-                epg = {
-                    "channel_id": channel_id,
-                    "starttime": starttime,
-                    "endtime": None,
-                    "title": title,
-                    "desc": "",
-                    "program_date": dt,
-                }
-                epgs.append(epg)
-        elif isinstance(res_j, list) and len(res_j) == 2 and res_j[0] == 0 and res_j[1] == '':
-            # 处理没有节目数据的情况
+    
+    for attempt in range(retries):
+        try:
+            res = requests.get(url, headers=headers)
+            res_j = res.json()
+            
+            # 检查返回的 JSON 数据结构
+            if isinstance(res_j, list) and len(res_j) > 2 and "pro" in res_j[2]:
+                datas = res_j[2]["pro"]
+                for data in datas:
+                    title = data["name"]
+                    starttime_str = data["time"]
+                    starttime = datetime.datetime.combine(dt, datetime.time(int(starttime_str[:2]), int(starttime_str[-2:])))
+                    epg = {
+                        "channel_id": channel_id,
+                        "starttime": starttime,
+                        "endtime": None,
+                        "title": title,
+                        "desc": "",
+                        "program_date": dt,
+                    }
+                    epgs.append(epg)
+                break  # 成功获取数据，退出重试循环
+            elif isinstance(res_j, list) and len(res_j) == 2 and res_j[0] == 0 and res_j[1] == '':
+                # 处理没有节目数据的情况
+                success = 0
+                msg = f"spider-tvmao-No program data for {channel_name}"
+                break  # 没有数据，退出重试循环
+            else:
+                success = 0
+                msg = f"spider-tvmao-API returned unexpected data structure: {res_j}"
+                if attempt < retries - 1:
+                    time.sleep(random.uniform(1, 2))  # 等待2-5秒后重试
+        except Exception as e:
             success = 0
-            msg = f"spider-tvmao-No program data for {channel_name}"
-        else:
-            success = 0
-            msg = f"spider-tvmao-API returned unexpected data structure: {res_j}"
-    except Exception as e:
-        success = 0
-        msg = f"spider-tvmao-{e}"
+            msg = f"spider-tvmao-{e}"
+            if attempt < retries - 1:
+                time.sleep(random.uniform(1, 2))  # 等待2-5秒后重试
+    
     ret = {
         "success": success,
         "epgs": epgs,
@@ -115,6 +124,10 @@ def main():
         dt = now_date + datetime.timedelta(days=i)  # 计算目标日期
         delta_days = (dt - now_date).days  # 计算与当前日期的差值
         need_weekday = (now_weekday + delta_days) % 7 + 1  # 计算正确的星期数（W1-W7，跨周后 W8-W14）
+
+        # 如果跨越到下一周，星期数需要增加7
+        if delta_days >= (7 - now_weekday):
+            need_weekday += 7
 
         print(f"正在抓取日期: {dt}，星期数: W{need_weekday}")
 
