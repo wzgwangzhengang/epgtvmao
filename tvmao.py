@@ -87,10 +87,10 @@ tvmao_df_dict = {
     '江西公共农业': ['/program/JXTV-JXTV5-w', 'JXTV5'],
     '江西少儿': ['/program/JXTV-JXTV6-w', 'JXTV6'],
     '江西新闻': ['/program/JXTV-JXTV7-w', 'JXTV7'],
-    '江西移动': ['/program/JXTV-XTV8-w', 'XTV8'],
+    '江西移动': ['/program/JXTV-JXTV8-w', 'JXTV8'],
     '风尚购物': ['/program/JXTV-FSTVGO-w', 'FSTVGO'],
     '江西电视指南': ['/program/JXTV-JXTV-GUIDE-w', 'JXTV-GUIDE'],
-    '江西移动': ['/program/JXTV-JXTV8-w', 'JXTV8'],
+    '江西教育': ['/program/JXTV-JXETV-w', 'JXETV'],
     '江西陶瓷': ['/program/JXTV-TAOCI-w', 'TAOCI'],
     '江西休闲影视':  ['/program/JXTV-JXXXYS-w', 'JXXXYS']
 }
