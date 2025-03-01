@@ -187,7 +187,7 @@ def save_epg_to_xml(all_epgs):
     print("已经生成压缩文件：tvmao.xml.gz")
 
 # 主函数
-ddef main():
+def main():
     all_epgs = []  # 存储所有频道的节目表
     now_date = datetime.datetime.now().date()  # 当前日期
     now_weekday = now_date.weekday()  # 当前星期几（0=周一，6=周日）
