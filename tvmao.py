@@ -124,7 +124,8 @@ def get_epg(channel_name, channel_id, dt):
             title = data["name"]
             starttime_str = data["time"]
             starttime = datetime.datetime.combine(
-                dt, datetime.time(int(starttime_str[:2]), int(starttime_str[-2:]))
+                dt, datetime.time(int(starttime_str[:2]), int(starttime_str[-2:])
+            )
             epg = {
                 "channel_id": channel_id,
                 "starttime": starttime,
