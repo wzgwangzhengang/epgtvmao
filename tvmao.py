@@ -138,6 +138,10 @@ def get_epg(channel_name, channel_id, dt):
                     "program_date": dt,
                 }
                 epgs.append(epg)
+        elif isinstance(res_j, list) and len(res_j) == 2 and res_j[0] == 0 and res_j[1] == '':
+            # 处理没有节目数据的情况
+            success = 0
+            msg = f"spider-tvmao-No program data for {channel_name}"
         else:
             success = 0
             msg = f"spider-tvmao-API returned unexpected data structure: {res_j}"
