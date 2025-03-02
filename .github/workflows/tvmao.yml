@@ -28,13 +28,12 @@ jobs:
     - name: Run EPG Generator
       run: |
         echo "开始生成EPG数据..."
-        python tvmao.py
-        if [ $? -ne 0 ]; then
+        if ! python tvmao.py; then
           echo "::error::EPG生成失败！检查tvmao.py脚本"
           exit 1
         fi
 
-    - name: Debug XML File
+    - name: Debug Files
       run: |
         if [ -s tvmao.xml ]; then
           echo "XML 文件内容："
@@ -44,8 +43,6 @@ jobs:
           exit 1
         fi
 
-    - name: Debug GZ File
-      run: |
         if [ -s tvmao.xml.gz ]; then
           echo "GZ 文件存在且非空"
           echo "GZ 文件大小：$(du -h tvmao.xml.gz | cut -f1)"
@@ -63,5 +60,9 @@ jobs:
           git add tvmao.xml tvmao.xml.gz
           COMMIT_TIME=$(date +'%Y-%m-%d %H:%M (CST)')
           COMMIT_MSG="EPG自动更新 $COMMIT_TIME"
-
-         
+          git commit -m "$COMMIT_MSG"
+          git push  # 推送到当前分支
+        else
+          echo "::error::文件为空或不存在，跳过提交"
+          exit 1
+        fi
