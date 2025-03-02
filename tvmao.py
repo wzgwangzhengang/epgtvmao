@@ -99,7 +99,7 @@ def save_epg_to_xml(all_epgs):
             end = epg["endtime"].astimezone(tz=tz_sh).strftime("%Y%m%d%H%M%S") + tz_str if epg["endtime"] else start
             title = epg["title"].replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("'", "&apos;").replace('"', "&quot;")
             desc = epg["desc"].replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("'", "&apos;").replace('"', "&quot;")
-            programinfo = f'<programme start="{start}" stop="{end}" channel="{epg["channel_id"]}"><title lang="zh">{title}</title><desc lang="zh">{desc}</desc></programme>\n'
+            programinfo = f'<programme channel="{epg["channel_id" start="{start}" stop="{end}"]}"><title lang="zh">{title}</title></programme>\n'
             f.write(programinfo)
         f.write(xmlbottom)
 
