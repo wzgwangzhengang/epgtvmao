@@ -30,19 +30,8 @@ def get_epg(channel_name, channel_id, dt):
     need_date = dt
     delta = (need_date - now_date).days  # 获取天数差值，直接使用 delta.days
 
-    # 获取当前日期的星期几（0=星期一，6=星期日）
-    now_weekday = now_date.weekday()  # 0=星期一，6=星期日
-
-    # 计算目标日期的 day 值
-    # 如果今天是星期日（now_weekday=6），则：
-    # - 今天（delta=0）的 day=7
-    # - 明天（delta=1）的 day=8
-    # - 后天（delta=2）的 day=9
-    # 如果今天是星期一（now_weekday=0），则：
-    # - 今天（delta=0）的 day=1
-    # - 明天（delta=1）的 day=2
-    # - 后天（delta=2）的 day=3
-    need_weekday = (now_weekday + delta) % 7 + 1 + delta
+    # 计算目标日期的星期几（1=星期一，7=星期日）
+    need_weekday = dt.weekday() + 1
 
     url = f"https://lighttv.tvmao.com/qa/qachannelschedule?epgCode={channel_id}&op=getProgramByChnid&epgName=&isNew=on&day={need_weekday}"
     
