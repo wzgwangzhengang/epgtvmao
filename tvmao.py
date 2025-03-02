@@ -28,10 +28,26 @@ def get_epg(channel_name, channel_id, dt):
     ban = 0  # 标识是否被BAN掉了
     now_date = datetime.datetime.now().date()
     need_date = dt
-    delta = need_date - now_date
-    now_weekday = now_date.weekday()
-    need_weekday = (now_weekday + delta.days) % 7 + 1 + delta  # 计算正确的星期数
+    delta = (need_date - now_date).days  # 获取天数差值，直接使用 delta.days
+
+    # 获取当前日期的星期几（0=星期一，6=星期日）
+    now_weekday = now_date.weekday()  # 0=星期一，6=星期日
+
+    # 计算目标日期的 day 值
+    # 如果今天是星期日（now_weekday=6），则：
+    # - 今天（delta=0）的 day=7
+    # - 明天（delta=1）的 day=8
+    # - 后天（delta=2）的 day=9
+    # 如果今天是星期一（now_weekday=0），则：
+    # - 今天（delta=0）的 day=1
+    # - 明天（delta=1）的 day=2
+    # - 后天（delta=2）的 day=3
+    need_weekday = (now_weekday + delta) % 7 + 1 + delta
+
     url = f"https://lighttv.tvmao.com/qa/qachannelschedule?epgCode={channel_id}&op=getProgramByChnid&epgName=&isNew=on&day={need_weekday}"
+    
+    # 调试输出
+    print(f"Fetching EPG for {channel_name} (Channel ID: {channel_id}, Date: {dt}, Day: {need_weekday})")
     
     try:
         res = requests.get(url, headers=headers)
@@ -41,7 +57,7 @@ def get_epg(channel_name, channel_id, dt):
         print(f"Response JSON for {channel_name} (Channel ID: {channel_id}, Date: {dt}):")
         print(json.dumps(res_j, indent=4, ensure_ascii=False))  # 格式化输出 JSON 数据
         
-        if len(res_j) > 2 and "pro" in res_j[2]:
+        if len(res_j) > 2 and isinstance(res_j[2], dict) and "pro" in res_j[2]:
             datas = res_j[2]["pro"]
             for data in datas:
                 title = data["name"]
