@@ -48,14 +48,24 @@ def get_epg(channel_name, channel_id, dt):
         
         if len(res_j) > 2 and isinstance(res_j[2], dict) and "pro" in res_j[2]:
             datas = res_j[2]["pro"]
-            for data in datas:
+            for i, data in enumerate(datas):
                 title = data["name"]
                 starttime_str = data["time"]
                 starttime = datetime.datetime.combine(dt, datetime.time(int(starttime_str[:2]), int(starttime_str[-2:])))
+                
+                # 假设每个节目的时长为 1 小时
+                if i < len(datas) - 1:
+                    next_starttime_str = datas[i + 1]["time"]
+                    next_starttime = datetime.datetime.combine(dt, datetime.time(int(next_starttime_str[:2]), int(next_starttime_str[-2:])))
+                    endtime = next_starttime
+                else:
+                    # 如果是最后一个节目，假设时长为 1 小时
+                    endtime = starttime + datetime.timedelta(hours=1)
+                
                 epg = {
                     "channel_id": channel_id,
                     "starttime": starttime,
-                    "endtime": None,
+                    "endtime": endtime,
                     "title": title,
                     "desc": "",
                     "program_date": dt,
