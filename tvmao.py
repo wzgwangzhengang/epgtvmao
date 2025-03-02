@@ -80,7 +80,7 @@ def get_epg(channel_name, channel_id, dt):
 
 # 将 EPG 数据保存为 XML 文件
 def save_epg_to_xml(all_epgs):
-    xmlhead = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE tv SYSTEM "http://api.torrent-tv.ru/xmltv.dtd"><tv generator-info-name="mxd-epg-xml" generator-info-url="https://epg.mxdyeah.top/">\n'
+    xmlhead = '<?xml version="1.0" encoding="UTF-8"?>\n'
     xmlbottom = "</tv>"
     tz_sh = tz.gettz("Asia/Shanghai")
     tz_str = " +0800"
