@@ -30,7 +30,7 @@ def get_epg(channel_name, channel_id, dt):
     need_date = dt
     delta = need_date - now_date
     now_weekday = now_date.weekday()
-    need_weekday = (now_weekday + delta.days) % 7 + 1  # 计算正确的星期数
+    need_weekday = (now_weekday + delta.days) % 7 + 1 + delta  # 计算正确的星期数
     url = f"https://lighttv.tvmao.com/qa/qachannelschedule?epgCode={channel_id}&op=getProgramByChnid&epgName=&isNew=on&day={need_weekday}"
     
     try:
