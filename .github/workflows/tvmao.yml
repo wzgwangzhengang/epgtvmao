@@ -2,7 +2,7 @@ name: TV Program EPG Updater
 
 on:
   schedule:
-    - cron: '0 17,4 * * *'  # UTC时间每天0点和12点（北京时间8点和20点）
+    - cron: '0 17 * * *'  # 每天UTC 17:00（北京时间凌晨1点）
   workflow_dispatch:
 
 jobs:
