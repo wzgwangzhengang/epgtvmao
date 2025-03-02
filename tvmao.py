@@ -32,26 +32,37 @@ def get_epg(channel_name, channel_id, dt):
     now_weekday = now_date.weekday()
     need_weekday = (now_weekday + delta.days) % 7 + 1  # 计算正确的星期数
     url = f"https://lighttv.tvmao.com/qa/qachannelschedule?epgCode={channel_id}&op=getProgramByChnid&epgName=&isNew=on&day={need_weekday}"
+    
     try:
         res = requests.get(url, headers=headers)
         res_j = res.json()
-        datas = res_j[2]["pro"]
-        for data in datas:
-            title = data["name"]
-            starttime_str = data["time"]
-            starttime = datetime.datetime.combine(dt, datetime.time(int(starttime_str[:2]), int(starttime_str[-2:])))
-            epg = {
-                "channel_id": channel_id,
-                "starttime": starttime,
-                "endtime": None,
-                "title": title,
-                "desc": "",
-                "program_date": dt,
-            }
-            epgs.append(epg)
+        
+        # 调试代码：打印返回的 JSON 数据
+        print(f"Response JSON for {channel_name} (Channel ID: {channel_id}, Date: {dt}):")
+        print(json.dumps(res_j, indent=4, ensure_ascii=False))  # 格式化输出 JSON 数据
+        
+        if len(res_j) > 2 and "pro" in res_j[2]:
+            datas = res_j[2]["pro"]
+            for data in datas:
+                title = data["name"]
+                starttime_str = data["time"]
+                starttime = datetime.datetime.combine(dt, datetime.time(int(starttime_str[:2]), int(starttime_str[-2:])))
+                epg = {
+                    "channel_id": channel_id,
+                    "starttime": starttime,
+                    "endtime": None,
+                    "title": title,
+                    "desc": "",
+                    "program_date": dt,
+                }
+                epgs.append(epg)
+        else:
+            success = 0
+            msg = f"spider-tvmao-No program data for {channel_name}"
     except Exception as e:
         success = 0
         msg = f"spider-tvmao-{e}"
+    
     ret = {
         "success": success,
         "epgs": epgs,
