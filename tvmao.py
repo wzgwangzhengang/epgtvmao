@@ -90,7 +90,7 @@ def get_epg(channel_name, channel_id, dt):
 
 # 将 EPG 数据保存为 XML 文件
 def save_epg_to_xml(all_epgs):
-    xmlhead = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xmlhead = '<?xml version="1.0" encoding="UTF-8"?><tv>\n'
     xmlbottom = "</tv>"
     tz_sh = tz.gettz("Asia/Shanghai")
     tz_str = " +0800"
@@ -101,7 +101,7 @@ def save_epg_to_xml(all_epgs):
         # 写入频道信息
         for channel_name, channel_info in tvmao_all_channels.items():
             channel_id = channel_info[1]
-            c = f'<channel id="{channel_id}"><display-name lang="zh">{channel_name}</display-name></channel><tv>\n'
+            c = f'<channel id="{channel_id}"><display-name lang="zh">{channel_name}</display-name></channel>\n'
             f.write(c)
         # 写入节目信息
         for epg in all_epgs:
