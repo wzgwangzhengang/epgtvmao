@@ -1,5 +1,6 @@
 {
     "channels": {
+        "农林卫视": ["/program/SHXITV-SHXITV9-w", "SHXITV9"],
         "江西都市": ["/program/JXTV-JXTV2-w", "JXTV2"],
         "江西经济生活": ["/program/JXTV-JXTV3-w", "JXTV3"],
         "江西影视旅游": ["/program/JXTV-JXTV4-w", "JXTV4"],
