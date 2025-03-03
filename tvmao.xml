@@ -1,16 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<channel id="JXTV2"><display-name lang="zh">江西都市</display-name></channel><tv>
-<channel id="JXTV3"><display-name lang="zh">江西经济生活</display-name></channel><tv>
-<channel id="JXTV4"><display-name lang="zh">江西影视旅游</display-name></channel><tv>
-<channel id="JXTV5"><display-name lang="zh">江西公共农业</display-name></channel><tv>
-<channel id="JXTV6"><display-name lang="zh">江西少儿</display-name></channel><tv>
-<channel id="JXTV7"><display-name lang="zh">江西新闻</display-name></channel><tv>
-<channel id="JXTV8"><display-name lang="zh">江西移动</display-name></channel><tv>
-<channel id="FSTVGO"><display-name lang="zh">风尚购物</display-name></channel><tv>
-<channel id="JXTV-GUIDE"><display-name lang="zh">江西电视指南</display-name></channel><tv>
-<channel id="JXETV"><display-name lang="zh">江西教育</display-name></channel><tv>
-<channel id="TAOCI"><display-name lang="zh">江西陶瓷</display-name></channel><tv>
-<channel id="JXXXYS"><display-name lang="zh">江西休闲影视</display-name></channel><tv>
+<?xml version="1.0" encoding="UTF-8"?><tv>
+<channel id="JXTV2"><display-name lang="zh">江西都市</display-name></channel>
+<channel id="JXTV3"><display-name lang="zh">江西经济生活</display-name></channel>
+<channel id="JXTV4"><display-name lang="zh">江西影视旅游</display-name></channel>
+<channel id="JXTV5"><display-name lang="zh">江西公共农业</display-name></channel>
+<channel id="JXTV6"><display-name lang="zh">江西少儿</display-name></channel>
+<channel id="JXTV7"><display-name lang="zh">江西新闻</display-name></channel>
+<channel id="JXTV8"><display-name lang="zh">江西移动</display-name></channel>
+<channel id="FSTVGO"><display-name lang="zh">风尚购物</display-name></channel>
+<channel id="JXTV-GUIDE"><display-name lang="zh">江西电视指南</display-name></channel>
+<channel id="JXETV"><display-name lang="zh">江西教育</display-name></channel>
+<channel id="TAOCI"><display-name lang="zh">江西陶瓷</display-name></channel>
+<channel id="JXXXYS"><display-name lang="zh">江西休闲影视</display-name></channel>
 <programme channel="JXTV2" start="20250303003000 +0800" stop="20250303053000 +0800"><title lang="zh">通宵剧场六集连播</title></programme>
 <programme channel="JXTV2" start="20250303053000 +0800" stop="20250303063000 +0800"><title lang="zh">《都市现场》60分钟精编版(重播)</title></programme>
 <programme channel="JXTV2" start="20250303063000 +0800" stop="20250303070000 +0800"><title lang="zh">《快乐生活一点通》</title></programme>
