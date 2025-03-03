@@ -101,7 +101,7 @@ def save_epg_to_xml(all_epgs):
         # 写入频道信息
         for channel_name, channel_info in tvmao_all_channels.items():
             channel_id = channel_info[1]
-            c = f'<channel id="{channel_id}"><display-name lang="zh">{channel_name}</display-name></channel>\n'
+            c = f'<channel id="{channel_id}"><display-name lang="zh">{channel_name}</display-name></channel><tv>\n'
             f.write(c)
         # 写入节目信息
         for epg in all_epgs:
