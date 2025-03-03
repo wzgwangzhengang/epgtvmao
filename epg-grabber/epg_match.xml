@@ -150,13 +150,6 @@
     <note>4KUHD</note>
 </epg>
 <epg>
-    <tvid>44</tvid>
-    <epgid>江西陶瓷</epgid>
-    <name>陶瓷,taoci,JXTV-TAOCI,江西电视台陶瓷频道</name>
-    <status>1</status>
-    <note>江西陶瓷</note>
-</epg>
-<epg>
     <tvid>45</tvid>
     <epgid>南昌综合</epgid>
     <name>南昌新闻,南昌1,南昌新闻综合,南昌电视台1</name>
@@ -169,13 +162,6 @@
     <name>茶,湖南茶频道,湖南茶,茶频道</name>
     <status>1</status>
     <note>精品大剧</note>
-</epg>
-<epg>
-    <tvid>47</tvid>
-    <epgid>江西教育</epgid>
-    <name>江西教育电视台</name>
-    <status>1</status>
-    <note>江西教育</note>
 </epg>
 <epg>
     <tvid>48</tvid>
