@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<channel id="JXTV2"><display-name lang="zh">江西都市</display-name></channel>
-<channel id="JXTV3"><display-name lang="zh">江西经济生活</display-name></channel>
-<channel id="JXTV4"><display-name lang="zh">江西影视旅游</display-name></channel>
-<channel id="JXTV5"><display-name lang="zh">江西公共农业</display-name></channel>
-<channel id="JXTV6"><display-name lang="zh">江西少儿</display-name></channel>
-<channel id="JXTV7"><display-name lang="zh">江西新闻</display-name></channel>
-<channel id="JXTV8"><display-name lang="zh">江西移动</display-name></channel>
-<channel id="FSTVGO"><display-name lang="zh">风尚购物</display-name></channel>
-<channel id="JXTV-GUIDE"><display-name lang="zh">江西电视指南</display-name></channel>
-<channel id="JXETV"><display-name lang="zh">江西教育</display-name></channel>
-<channel id="TAOCI"><display-name lang="zh">江西陶瓷</display-name></channel>
-<channel id="JXXXYS"><display-name lang="zh">江西休闲影视</display-name></channel>
+<channel id="JXTV2"><display-name lang="zh">江西都市</display-name></channel><tv>
+<channel id="JXTV3"><display-name lang="zh">江西经济生活</display-name></channel><tv>
+<channel id="JXTV4"><display-name lang="zh">江西影视旅游</display-name></channel><tv>
+<channel id="JXTV5"><display-name lang="zh">江西公共农业</display-name></channel><tv>
+<channel id="JXTV6"><display-name lang="zh">江西少儿</display-name></channel><tv>
+<channel id="JXTV7"><display-name lang="zh">江西新闻</display-name></channel><tv>
+<channel id="JXTV8"><display-name lang="zh">江西移动</display-name></channel><tv>
+<channel id="FSTVGO"><display-name lang="zh">风尚购物</display-name></channel><tv>
+<channel id="JXTV-GUIDE"><display-name lang="zh">江西电视指南</display-name></channel><tv>
+<channel id="JXETV"><display-name lang="zh">江西教育</display-name></channel><tv>
+<channel id="TAOCI"><display-name lang="zh">江西陶瓷</display-name></channel><tv>
+<channel id="JXXXYS"><display-name lang="zh">江西休闲影视</display-name></channel><tv>
 <programme channel="JXTV2" start="20250303003000 +0800" stop="20250303053000 +0800"><title lang="zh">通宵剧场六集连播</title></programme>
 <programme channel="JXTV2" start="20250303053000 +0800" stop="20250303063000 +0800"><title lang="zh">《都市现场》60分钟精编版(重播)</title></programme>
 <programme channel="JXTV2" start="20250303063000 +0800" stop="20250303070000 +0800"><title lang="zh">《快乐生活一点通》</title></programme>
@@ -105,30 +105,29 @@
 <programme channel="JXTV8" start="20250303215500 +0800" stop="20250303225700 +0800"><title lang="zh">夜剧场</title></programme>
 <programme channel="JXTV8" start="20250303225700 +0800" stop="20250303235900 +0800"><title lang="zh">夜剧场</title></programme>
 <programme channel="JXTV8" start="20250303235900 +0800" stop="20250304005900 +0800"><title lang="zh">结束</title></programme>
-<programme channel="FSTVGO" start="20250303000000 +0800" stop="20250303014000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303014000 +0800" stop="20250303023000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303023000 +0800" stop="20250303032000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303032000 +0800" stop="20250303040000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303040000 +0800" stop="20250303052000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303052000 +0800" stop="20250303060000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303060000 +0800" stop="20250303072000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303072000 +0800" stop="20250303083000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303083000 +0800" stop="20250303091000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303091000 +0800" stop="20250303100000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303100000 +0800" stop="20250303112000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303112000 +0800" stop="20250303120000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303120000 +0800" stop="20250303133000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303133000 +0800" stop="20250303141000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303141000 +0800" stop="20250303153000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303153000 +0800" stop="20250303161000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303161000 +0800" stop="20250303174000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303174000 +0800" stop="20250303183000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303183000 +0800" stop="20250303191000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303191000 +0800" stop="20250303200000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303200000 +0800" stop="20250303214000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303214000 +0800" stop="20250303223000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303223000 +0800" stop="20250303232000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250303232000 +0800" stop="20250304002000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303010000 +0800" stop="20250303020000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303020000 +0800" stop="20250303030000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303030000 +0800" stop="20250303040000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303040000 +0800" stop="20250303050000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303050000 +0800" stop="20250303060000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303060000 +0800" stop="20250303070000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303070000 +0800" stop="20250303080000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303080000 +0800" stop="20250303090000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303090000 +0800" stop="20250303100000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303100000 +0800" stop="20250303110000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303110000 +0800" stop="20250303120000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303120000 +0800" stop="20250303130000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303130000 +0800" stop="20250303140000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303140000 +0800" stop="20250303150000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303150000 +0800" stop="20250303160000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303160000 +0800" stop="20250303170000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303170000 +0800" stop="20250303180000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303180000 +0800" stop="20250303190000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303190000 +0800" stop="20250303200000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303200000 +0800" stop="20250303210000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303210000 +0800" stop="20250303220000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303220000 +0800" stop="20250303230000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250303230000 +0800" stop="20250304000000 +0800"><title lang="zh">风尚购物</title></programme>
 <programme channel="JXTV-GUIDE" start="20250303000000 +0800" stop="20250303060000 +0800"><title lang="zh">午夜剧场</title></programme>
 <programme channel="JXTV-GUIDE" start="20250303060000 +0800" stop="20250303070000 +0800"><title lang="zh">探索</title></programme>
 <programme channel="JXTV-GUIDE" start="20250303070000 +0800" stop="20250303073000 +0800"><title lang="zh">影视喜乐汇</title></programme>
@@ -271,30 +270,29 @@
 <programme channel="JXTV8" start="20250304215500 +0800" stop="20250304225700 +0800"><title lang="zh">夜剧场</title></programme>
 <programme channel="JXTV8" start="20250304225700 +0800" stop="20250304235900 +0800"><title lang="zh">夜剧场</title></programme>
 <programme channel="JXTV8" start="20250304235900 +0800" stop="20250305005900 +0800"><title lang="zh">结束</title></programme>
-<programme channel="FSTVGO" start="20250304000000 +0800" stop="20250304014000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304014000 +0800" stop="20250304023000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304023000 +0800" stop="20250304032000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304032000 +0800" stop="20250304040000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304040000 +0800" stop="20250304052000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304052000 +0800" stop="20250304060000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304060000 +0800" stop="20250304072000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304072000 +0800" stop="20250304083000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304083000 +0800" stop="20250304091000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304091000 +0800" stop="20250304100000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304100000 +0800" stop="20250304112000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304112000 +0800" stop="20250304120000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304120000 +0800" stop="20250304133000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304133000 +0800" stop="20250304141000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304141000 +0800" stop="20250304153000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304153000 +0800" stop="20250304161000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304161000 +0800" stop="20250304174000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304174000 +0800" stop="20250304183000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304183000 +0800" stop="20250304191000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304191000 +0800" stop="20250304200000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304200000 +0800" stop="20250304214000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304214000 +0800" stop="20250304223000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304223000 +0800" stop="20250304232000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250304232000 +0800" stop="20250305002000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304010000 +0800" stop="20250304020000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304020000 +0800" stop="20250304030000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304030000 +0800" stop="20250304040000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304040000 +0800" stop="20250304050000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304050000 +0800" stop="20250304060000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304060000 +0800" stop="20250304070000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304070000 +0800" stop="20250304080000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304080000 +0800" stop="20250304090000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304090000 +0800" stop="20250304100000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304100000 +0800" stop="20250304110000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304110000 +0800" stop="20250304120000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304120000 +0800" stop="20250304130000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304130000 +0800" stop="20250304140000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304140000 +0800" stop="20250304150000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304150000 +0800" stop="20250304160000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304160000 +0800" stop="20250304170000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304170000 +0800" stop="20250304180000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304180000 +0800" stop="20250304190000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304190000 +0800" stop="20250304200000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304200000 +0800" stop="20250304210000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304210000 +0800" stop="20250304220000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304220000 +0800" stop="20250304230000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250304230000 +0800" stop="20250305000000 +0800"><title lang="zh">风尚购物</title></programme>
 <programme channel="JXTV-GUIDE" start="20250304000000 +0800" stop="20250304060000 +0800"><title lang="zh">午夜剧场</title></programme>
 <programme channel="JXTV-GUIDE" start="20250304060000 +0800" stop="20250304070000 +0800"><title lang="zh">探索</title></programme>
 <programme channel="JXTV-GUIDE" start="20250304070000 +0800" stop="20250304073000 +0800"><title lang="zh">影视喜乐汇</title></programme>
@@ -437,30 +435,29 @@
 <programme channel="JXTV8" start="20250305215500 +0800" stop="20250305225700 +0800"><title lang="zh">夜剧场</title></programme>
 <programme channel="JXTV8" start="20250305225700 +0800" stop="20250305235900 +0800"><title lang="zh">夜剧场</title></programme>
 <programme channel="JXTV8" start="20250305235900 +0800" stop="20250306005900 +0800"><title lang="zh">结束</title></programme>
-<programme channel="FSTVGO" start="20250305000000 +0800" stop="20250305014000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305014000 +0800" stop="20250305023000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305023000 +0800" stop="20250305032000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305032000 +0800" stop="20250305040000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305040000 +0800" stop="20250305052000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305052000 +0800" stop="20250305060000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305060000 +0800" stop="20250305072000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305072000 +0800" stop="20250305083000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305083000 +0800" stop="20250305091000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305091000 +0800" stop="20250305100000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305100000 +0800" stop="20250305112000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305112000 +0800" stop="20250305120000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305120000 +0800" stop="20250305133000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305133000 +0800" stop="20250305141000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305141000 +0800" stop="20250305153000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305153000 +0800" stop="20250305161000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305161000 +0800" stop="20250305174000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305174000 +0800" stop="20250305183000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305183000 +0800" stop="20250305191000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305191000 +0800" stop="20250305200000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305200000 +0800" stop="20250305214000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305214000 +0800" stop="20250305223000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305223000 +0800" stop="20250305232000 +0800"><title lang="zh">风尚购物</title></programme>
-<programme channel="FSTVGO" start="20250305232000 +0800" stop="20250306002000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305010000 +0800" stop="20250305020000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305020000 +0800" stop="20250305030000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305030000 +0800" stop="20250305040000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305040000 +0800" stop="20250305050000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305050000 +0800" stop="20250305060000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305060000 +0800" stop="20250305070000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305070000 +0800" stop="20250305080000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305080000 +0800" stop="20250305090000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305090000 +0800" stop="20250305100000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305100000 +0800" stop="20250305110000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305110000 +0800" stop="20250305120000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305120000 +0800" stop="20250305130000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305130000 +0800" stop="20250305140000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305140000 +0800" stop="20250305150000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305150000 +0800" stop="20250305160000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305160000 +0800" stop="20250305170000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305170000 +0800" stop="20250305180000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305180000 +0800" stop="20250305190000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305190000 +0800" stop="20250305200000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305200000 +0800" stop="20250305210000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305210000 +0800" stop="20250305220000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305220000 +0800" stop="20250305230000 +0800"><title lang="zh">风尚购物</title></programme>
+<programme channel="FSTVGO" start="20250305230000 +0800" stop="20250306000000 +0800"><title lang="zh">风尚购物</title></programme>
 <programme channel="JXTV-GUIDE" start="20250305000000 +0800" stop="20250305060000 +0800"><title lang="zh">午夜剧场</title></programme>
 <programme channel="JXTV-GUIDE" start="20250305060000 +0800" stop="20250305070000 +0800"><title lang="zh">探索</title></programme>
 <programme channel="JXTV-GUIDE" start="20250305070000 +0800" stop="20250305073000 +0800"><title lang="zh">影视喜乐汇</title></programme>
