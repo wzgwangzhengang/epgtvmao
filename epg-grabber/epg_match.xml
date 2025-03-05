@@ -114,10 +114,10 @@
 </epg>
 <epg>
     <tvid>17</tvid>
-    <epgid>梨园频道</epgid>
-    <name>梨园</name>
-	 <status>1</status>
-    <note>梨园频道</note>
+    <epgid>山东教育</epgid>
+    <name>山东教育台</name>
+    <status>1</status>
+    <note>山东教育</note>
 </epg>
 <epg>
     <tvid>19</tvid>
@@ -234,7 +234,7 @@
 <epg>
     <tvid>59</tvid>
     <epgid>国学频道</epgid>
-    <name>国学,国学频道</name>
+    <name>国学,说文解字</name>
     <status>1</status>
     <note>国学频道</note>
 </epg>
