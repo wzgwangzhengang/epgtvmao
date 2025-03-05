@@ -14,7 +14,7 @@ tz = pytz.timezone('Asia/Shanghai')
 cctv_channel = ['cctv1', 'cctv2', 'cctv3', 'cctv4', 'cctv5', 'cctv5plus', 'cctv6','cctv7', 'cctv8', 'cctvjilu', 'cctv10', 'cctv11', 'cctv12','cctv13',
                 'cctvchild','cctv15', 'cctv16', 'cctv17', 'cctveurope', 'cctvamerica', 'cctvxiyu', 'cctv4k', 'cctvarabic', 'cctvfrench', 'cctvrussian',
                 'shijiedili', 'dianshigouwu', 'taiqiu', 'jingpin', 'shishang', 'hjjc','zhinan', 'diyijuchang', 'fyjc', 'cctvfyzq', 'fyyy',
-                'cctvgaowang', 'faxianzhilv','cetv1', 'cetv2', 'cetv3', 'cetv4', 'cctvdoc', 'cctv9', 'btv1', 'btvjishi', 'dongfang', 'hunan', 'shandong', 'zhejiang', 'jiangsu', 'guangdong', 'dongnan', 'anhui', 
+                'cctvgaowang', 'faxianzhilv','cetv1', 'cetv2', 'xianggangweishi', 'cetv4', 'cctvdoc', 'cctv9', 'btv1', 'btvjishi', 'dongfang', 'hunan', 'shandong', 'zhejiang', 'jiangsu', 'guangdong', 'dongnan', 'anhui', 
                'gansu', 'liaoning', 'travel', 'neimenggu', 'ningxia', 'qinghai', 'xiamen', 'yunnan', 'chongqing', 'jiangxi', 'shan1xi', 
                'shan3xi', 'shenzhen', 'sichuan', 'tianjin', 'guangxi', 'guizhou', 'hebei', 'henan', 'heilongjiang', 'hubei', 'jilin', 
                'yanbian', 'xizang', 'xinjiang', 'bingtuan', 'btvchild', 'sdetv', 'shuhua', 'xianfengjilu', 'shuowenjiezi', 'kuailechuidiao', 'wenwubaoku', 
