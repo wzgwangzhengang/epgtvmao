@@ -42,7 +42,6 @@
     <status>1</status>
     <note>CCTV4K</note>
 </epg>
-
 <epg>
     <tvid>7</tvid>
     <epgid>CETV-1 综合教育</epgid>
@@ -78,7 +77,6 @@
     <status>1</status>
     <note>北京纪实科教</note>
 </epg>
-
 <epg>
     <tvid>12</tvid>
     <epgid>KAKU少儿</epgid>
@@ -161,7 +159,7 @@
     <epgid>茶频道</epgid>
     <name>茶,湖南茶频道,湖南茶,茶频道</name>
     <status>1</status>
-    <note>精品大剧</note>
+    <note>茶频道</note>
 </epg>
 <epg>
     <tvid>48</tvid>
@@ -218,13 +216,6 @@
     <name>延边2台,YBTV-2,YBTV2,延边卫视2</name>
     <status>1</status>
     <note>延边卫视2</note>
-</epg>
-<epg>
-    <tvid>56</tvid>
-    <epgid>风尚购物</epgid>
-    <name>江西风尚购物,JXTV-FSTVGO,风尚购物,风尚购物频道,江西风尚购物频道,风尚</name>
-    <status>1</status>
-    <note>风尚购物</note>
 </epg>
 <epg>
     <tvid>57</tvid>
