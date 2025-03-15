@@ -71,13 +71,6 @@
     <note>CETV-4 职业教育</note>
 </epg>
 <epg>
-    <tvid>11</tvid>
-    <epgid>BRTV纪实科教</epgid>
-    <name>纪实科教,北京纪实科教,北京纪实,BTV纪实,BTV纪实科教,BTV纪</name>
-    <status>1</status>
-    <note>BRTV纪实科教</note>
-</epg>
-<epg>
     <tvid>13</tvid>
     <epgid>CGTN俄语</epgid>
     <name>CCTV-Русский</name>
@@ -136,7 +129,7 @@
 <epg>
     <tvid>45</tvid>
     <epgid>南昌综合</epgid>
-    <name>南昌新闻,南昌1,南昌新闻综合,南昌电视台1</name>
+    <name>南昌新闻综合,南昌电视台1</name>
     <status>1</status>
     <note>南昌综合</note>
 </epg>
