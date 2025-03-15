@@ -29,13 +29,6 @@
     <note>兵器科技</note>
 </epg>
 <epg>
-    <tvid>5</tvid>
-    <epgid>CCTV文化精品</epgid>
-    <name>CCTV央视文化精品</name>
-    <status>1</status>
-    <note>文化精品</note>
-</epg>
-<epg>
     <tvid>6</tvid>
     <epgid>CCTV4K 超高清</epgid>
     <name>CCTV-4K</name>
@@ -125,13 +118,6 @@
     <name>纯享4K,4KUH,4ku,4KU,UHD,4KUHD</name>
     <status>1</status>
     <note>4KUHD</note>
-</epg>
-<epg>
-    <tvid>45</tvid>
-    <epgid>南昌综合</epgid>
-    <name>南昌新闻综合,南昌电视台1</name>
-    <status>1</status>
-    <note>南昌综合</note>
 </epg>
 <epg>
     <tvid>46</tvid>
