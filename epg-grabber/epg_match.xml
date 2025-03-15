@@ -72,17 +72,10 @@
 </epg>
 <epg>
     <tvid>11</tvid>
-    <epgid>北京纪实科教</epgid>
-    <name>纪实科教,北京纪实科教,北京纪实,BTV纪实,BTV纪实科教,BTV纪,BTV科教</name>
+    <epgid>BRTV纪实科教</epgid>
+    <name>纪实科教,北京纪实科教,北京纪实,BTV纪实,BTV纪实科教,BTV纪</name>
     <status>1</status>
-    <note>北京纪实科教</note>
-</epg>
-<epg>
-    <tvid>12</tvid>
-    <epgid>KAKU少儿</epgid>
-    <name>BRTV卡酷少儿</name>
-    <status>1</status>
-    <note>北京卡酷</note>
+    <note>BRTV纪实科教</note>
 </epg>
 <epg>
     <tvid>13</tvid>
