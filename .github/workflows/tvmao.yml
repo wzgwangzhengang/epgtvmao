@@ -1,4 +1,4 @@
-name: TV Program EPG Updater
+name: TVmao EPG Updater
 
 on:
   schedule:
