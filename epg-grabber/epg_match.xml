@@ -203,11 +203,4 @@
     <status>1</status>
     <note>国学频道</note>
 </epg>
-<epg>
-    <tvid>60</tvid>
-    <epgid>中视购物</epgid>
-    <name>CCTV中视购物</name>
-    <status>1</status>
-    <note>中视购物</note>
-</epg>
 </epgs>
