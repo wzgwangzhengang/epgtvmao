@@ -1,4 +1,4 @@
-name: 更新CNTVEPG
+name: CNTV EPG
 on:
   schedule:
     - cron: '0 17 * * *'  # 每天UTC 17:00（北京时间凌晨1点）
