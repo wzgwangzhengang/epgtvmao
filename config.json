@@ -5,7 +5,7 @@
 	"康巴卫视": ["/program_satellite/KAMBA-TV-w", "KAMBA"],
 	"三沙卫视": ["/program_satellite/SANSHATV-w", "SANSHATV"],
 	"东方财经": ["/program/SITV14-w", "SITV14"],
-	"中国天气": ["/program/BAMC-CHINA-WEATHER-TV-w", "BAMC-CHINA-WEATHER-TV"],
+	"中国天气": ["/program/BAMC-CHINA-WEATHER-TV-w", "CHINA-WEATHER-TV"],
         "江西都市": ["/program/JXTV-JXTV2-w", "JXTV2"],
         "江西经济生活": ["/program/JXTV-JXTV3-w", "JXTV3"],
         "江西影视旅游": ["/program/JXTV-JXTV4-w", "JXTV4"],
