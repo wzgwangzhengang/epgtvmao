@@ -194,12 +194,10 @@ if __name__ == "__main__":
     epg_urls = [
         'https://raw.githubusercontent.com/lxxcp/epg/main/cntvepg.xml.gz',
         'https://raw.githubusercontent.com/lxxcp/epg/main/tvmao.xml.gz',
-        'http://epg.51zmt.top:8000/e.xml.gz',
-        'https://epg.v1.mk/fy.xml.gz',
         'https://iptv.crestekk.cn/epgphp/t.xml.gz',
+        'https://epg.v1.mk/fy.xml.gz',
         'https://raw.githubusercontent.com/sparkssssssssss/epg/main/pp.xml.gz',
         'https://epg.pw/xmltv/epg_CN.xml.gz',
-        'https://github.com/iptv-pro/iptv-pro.github.io/blob/main/epg/epg.xml.gz',
         'https://gitee.com/taksssss/tv/raw/main/epg/erw.xml.gz',
         'https://gitee.com/taksssss/tv/raw/main/epg/112114.xml.gz',
         'https://gitee.com/taksssss/tv/raw/main/epg/51zmt.xml.gz',
