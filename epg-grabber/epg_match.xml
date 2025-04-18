@@ -93,7 +93,7 @@
 </epg>
 <epg>
     <tvid>17</tvid>
-    <epgid>CGTN-Documentary</epgid>
+    <epgid>CGTN纪录</epgid>
     <name>CCTV-9 纪录(英)</name>
     <status>1</status>
     <note>CGTN阿语</note>
@@ -184,10 +184,17 @@
 </epg>
 <epg>
     <tvid>55</tvid>
-    <epgid>延边卫视2</epgid>
-    <name>延边2台,YBTV-2,YBTV2,延边卫视2</name>
+    <epgid>延边汉语</epgid>
+    <name>YBTV-2,YBTV2</name>
     <status>1</status>
-    <note>延边卫视2</note>
+    <note>延边汉语</note>
+</epg>
+<epg>
+    <tvid>56</tvid>
+    <epgid>延边朝语</epgid>
+    <name>YBTV-1,YBTV1</name>
+    <status>1</status>
+    <note>延边朝语</note>
 </epg>
 <epg>
     <tvid>57</tvid>
