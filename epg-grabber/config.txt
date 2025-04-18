@@ -42,11 +42,11 @@ CETV-2 空中课堂
 CETV-3 教育服务
 CETV-4 职业教育
 CGTN
-CGTN Documentary
-CGTN Русский
-CGTN Français
-CGTN Español
-CGTN العربية
+CGTN-Documentary
+CGTN-Русский
+CGTN-Français
+CGTN-Español
+CGTN-العربية
 CGTN俄语
 CGTN法语
 CGTN纪录
