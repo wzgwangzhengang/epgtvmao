@@ -92,6 +92,13 @@
     <note>CGTN阿语</note>
 </epg>
 <epg>
+    <tvid>17</tvid>
+    <epgid>CGTN-Documentary</epgid>
+    <name>CCTV-9 纪录(英)</name>
+    <status>1</status>
+    <note>CGTN阿语</note>
+</epg>
+<epg>
     <tvid>19</tvid>
     <epgid>CCTV-16 奥林匹克</epgid>
     <name>CCTV-16奥林匹克</name>
