@@ -195,6 +195,7 @@ if __name__ == "__main__":
         'https://raw.githubusercontent.com/lxxcp/epg/main/cntvepg.xml.gz',
         'https://raw.githubusercontent.com/lxxcp/epg/main/tvmao.xml.gz',
         'https://iptv.crestekk.cn/epgphp/t.xml.gz',
+        'https://github.com/mytv-android/myEPG/blob/master/output/epg.gz',
         'https://epg.v1.mk/fy.xml.gz',
         'https://raw.githubusercontent.com/sparkssssssssss/epg/main/pp.xml.gz',
         'https://epg.pw/xmltv/epg_CN.xml.gz',
