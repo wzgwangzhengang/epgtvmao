@@ -6,6 +6,7 @@ import requests
 import gzip
 from lxml import html
 from datetime import datetime, timezone, timedelta
+from html import escape 
 
 tz = pytz.timezone('Asia/Shanghai')
 
@@ -76,7 +77,7 @@ def getChannelEPG(fhandle, channelIDs):
                     print(f"  已自动修正结束时间为：{end}")
                 
                 fhandle.write(f'  <programme channel="{channel}" start="{start}" stop="{end}">\n')
-                fhandle.write(f'    <title lang="zh">{detail["t"]}</title>\n')
+                fhandle.write(f'    <title lang="zh">{escape(detail["t"])}</title>\n')
                 fhandle.write('  </programme>\n')
 
 # 新增统计功能
