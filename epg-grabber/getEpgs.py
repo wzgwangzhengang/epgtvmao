@@ -6,7 +6,7 @@ import logging
 from copy import deepcopy
 import datetime
 import pytz
-
+from xml.sax.saxutils import escape
 # 配置参数
 config_file = os.path.join(os.path.dirname(__file__), 'config.txt')
 epg_match_file = os.path.join(os.path.dirname(__file__), 'epg_match.xml')
@@ -137,6 +137,11 @@ def process_sources(urls, alias_mapping, config_names):
                 
                 # 克隆并更新节目信息
                 new_prog = deepcopy(programme)
+                for elem in new_prog.iter():
+                    if elem.text:
+                        elem.text = escape(elem.text)
+                    if elem.tail:
+                        elem.tail = escape(elem.tail)
                 new_prog.set('channel', mapped_id)
                 new_prog.set('start', start_time.strftime("%Y%m%d%H%M%S +0800"))
                 if programme.get('stop'):
