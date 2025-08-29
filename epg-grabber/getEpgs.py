@@ -199,7 +199,6 @@ if __name__ == "__main__":
     epg_urls = [
         'https://raw.githubusercontent.com/lxxcp/epg/main/cntvepg.xml.gz',
         'https://raw.githubusercontent.com/lxxcp/epg/main/tvmao.xml.gz',
-        'https://e.136605.xyz/9.xml.gz',
         'https://iptv.crestekk.cn/epgphp/t.xml.gz',
         'https://raw.githubusercontent.com/mytv-android/myEPG/master/output/epg.gz',
         'https://epg.v1.mk/fy.xml.gz',
