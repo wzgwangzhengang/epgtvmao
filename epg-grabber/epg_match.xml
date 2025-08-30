@@ -44,14 +44,14 @@
 </epg>
 <epg>
     <tvid>8</tvid>
-    <epgid>CETV-2 空中课堂</epgid>
+    <epgid>CETV-2 教育教学</epgid>
     <name>CETV-2</name>
     <status>1</status>
     <note>教育二套</note>
 </epg>
 <epg>
     <tvid>9</tvid>
-    <epgid>CETV-3 教育服务</epgid>
+    <epgid>CETV-3 北京地面</epgid>
     <name>CETV-3</name>
     <status>1</status>
     <note>教育三套,中国教育三套,中国教育3套</note>
@@ -141,6 +141,28 @@
     <note>江西陶瓷</note>
 </epg>
 <epg>
+    <tvid>25</tvid>
+    <epgid>中央新影-中学生</epgid>
+    <name>中学生,CCTV中学生,CCTV-中学生,cctv中学生,cctv-中学生</name>
+    <status>1</status>
+    <note>中央新影-中学生</note>
+</epg>
+<epg>
+    <tvid>26</tvid>
+    <epgid>中央新影-老故事</epgid>
+    <name>老故事,CCTV老故事,CCTV-老故事,cctv老故事,cctv-老故事</name>
+    <status>1</status>
+    <note>中央新影-老故事</note>
+</epg>
+<epg>
+    <tvid>27</tvid>
+    <epgid>中央新影-发现之旅</epgid>
+    <name>发现之旅,CCTV发现之旅,CCTV-发现之旅,cctv发现之旅,cctv-发现之旅</name>
+    <status>1</status>
+    <note>中央新影-发现之旅</note>
+</epg>
+
+<epg>
     <tvid>42</tvid>
     <epgid>4KUHD</epgid>
     <name>纯享4K,4KUH,4ku,4KU,UHD,4KUHD</name>
@@ -216,13 +238,6 @@
     <name>YBTV-1,YBTV1</name>
     <status>1</status>
     <note>延边朝语</note>
-</epg>
-<epg>
-    <tvid>58</tvid>
-    <epgid>武搏世界</epgid>
-    <name>武搏,搏击,newtv搏击,newtv武搏,newtv武搏世界</name>
-    <status>1</status>
-    <note>武搏世界</note>
 </epg>
 <epg>
     <tvid>59</tvid>
