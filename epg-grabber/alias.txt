@@ -2,8 +2,8 @@
 CCTV-4 中文国际|CCTV-4 (亚洲)
 CCTV-4 中文国际欧洲|CCTV-4 (欧洲)
 CCTV-4 中文国际美洲|CCTV-4 (美洲)
-CCTV兵器科技|兵器科技,CCTV-兵器科技,CCTV兵器科技
-CCTV4K 超高清|CCTV-4K
+CCTV兵器科技|兵器科技,CCTV-兵器科技
+CCTV兵器科技|卫生健康,CCTV-卫生健康
 CETV-1 综合教育|CETV-1
 CETV-2 教育教学|CETV-2
 CETV-3 北京地面|CETV-3,教育三套,中国教育三套,中国教育3套
@@ -12,7 +12,7 @@ CGTN俄语|CCTV-Русский
 CGTN法语|CCTV-Français
 CGTN西语|CCTV-Español
 CGTN阿语|CCTV-العربية
-CGTN纪录|CCTV-9 纪录(英)
+CGTN纪录|CCTV-9 纪录(英),CCTV-News
 CCTV-16 奥林匹克|CCTV-16奥林匹克,央视奥林匹克
 CCTV-17 农业农村|CCTV-17农业农村
 广东卫视 4K|广东卫视,广东卫视 4K超高清
@@ -40,3 +40,6 @@ AMC电影台|AMC,AMC电影,AMC电影台,amc电影台
 宁波经济生活|NBTV-2
 宁波都市文体|NBTV-3
 宁波影视剧|NBTV-4
+山东教育|山东教育台
+梨园频道|梨园
+重庆汽摩|汽摩
