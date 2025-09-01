@@ -200,7 +200,7 @@ if __name__ == "__main__":
     
     # 初始化配置
     config_names = load_config(config_file)
-    alias_mapping = load_epg_mapping(epg_match_file)
+    alias_mapping = load_epg_mapping(alias_file)
     
     # 数据源列表
     epg_urls = [
