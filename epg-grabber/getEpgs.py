@@ -9,7 +9,7 @@ import pytz
 from xml.sax.saxutils import escape
 # 配置参数
 config_file = os.path.join(os.path.dirname(__file__), 'config.txt')
-epg_match_file = os.path.join(os.path.dirname(__file__), 'epg_match.xml')
+alias_file = os.path.join(os.path.dirname(__file__), 'alias.txt')  # 改为txt文件
 output_file_gz = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'e.xml.gz')
 TIMEZONE = pytz.timezone('Asia/Shanghai')
 
@@ -27,21 +27,28 @@ def load_config(config_file):
         logging.error(f"Failed to load config: {e}")
     return config_names
 
-def load_epg_mapping(epg_match_file):
-    """构建别名到标准名称的映射表"""
+def load_epg_mapping(alias_file):
+    """从文本文件构建别名到标准名称的映射表"""
     alias_mapping = {}
     try:
-        tree = ET.parse(epg_match_file)
-        for epg in tree.findall('epg'):
-            standard_name = epg.find('epgid').text.strip()
-            aliases = [a.strip() for a in epg.find('name').text.split(',') if a.strip()]
-            for alias in aliases:
-                alias_mapping[alias] = standard_name
-        logging.info(f"Loaded {len(alias_mapping)} alias mappings from {epg_match_file}")
+        with open(alias_file, 'r', encoding='utf-8') as file:
+            for line in file:
+                line = line.strip()
+                if not line or line.startswith('#'):
+                    continue
+                
+                if '|' in line:
+                    standard_name, aliases_str = line.split('|', 1)
+                    standard_name = standard_name.strip()
+                    aliases = [a.strip() for a in aliases_str.split(',') if a.strip()]
+                    
+                    for alias in aliases:
+                        alias_mapping[alias] = standard_name
+                    
+        logging.info(f"Loaded {len(alias_mapping)} alias mappings from {alias_file}")
     except Exception as e:
-        logging.error(f"Failed to load EPG mapping: {e}")
+        logging.error(f"Failed to load alias mapping: {e}")
     return alias_mapping
-
 def map_channel(display_name, config_names, alias_mapping):
     """频道匹配核心逻辑"""
     # 1. 直接匹配config.txt
