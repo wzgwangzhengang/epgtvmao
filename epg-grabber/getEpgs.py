@@ -209,6 +209,7 @@ if __name__ == "__main__":
         'https://iptv.crestekk.cn/epgphp/t.xml.gz',
         'https://raw.githubusercontent.com/mytv-android/myEPG/master/output/epg.gz',
         'https://epg.pw/xmltv/epg_CN.xml.gz',
+        'http://liliu.serv00.net/epg/all.xml.gz',
         'https://gitee.com/taksssss/tv/raw/main/epg/erw.xml.gz',
         'https://gitee.com/taksssss/tv/raw/main/epg/112114.xml.gz',
         'https://gitee.com/taksssss/tv/raw/main/epg/51zmt.xml.gz',
